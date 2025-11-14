@@ -232,3 +232,44 @@ canvas {
     background: var(--color-accent);
     opacity: 0.7;
 }
+
+/* --- RESPONSIVE STYLES --- */
+
+@media (max-width: 768px) {
+    
+    /* Change the side-panel to a bottom-sheet on mobile */
+    .details-dialog {
+        width: 100%;
+        max-width: 100%;
+        height: 50vh; /* 50% of the screen height */
+        top: auto;
+        bottom: 0;
+        border-right: none;
+        border-top: 1px solid var(--color-border-subtle);
+        
+        /* New animation: slide up from bottom */
+        transform: translateY(0);
+    }
+    
+    /* Make it slide down to hide */
+    .details-dialog.hidden {
+        transform: translateY(100%);
+    }
+
+    /* Adjust the close button position for the new panel */
+    .dialog-close-btn {
+        top: 15px;
+        right: 15px;
+    }
+
+    /* Move the pause button to be safer from phone "notches" */
+    .control-button {
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Make the labels a bit smaller on mobile */
+    .planet-label {
+        font-size: 11px;
+    }
+}

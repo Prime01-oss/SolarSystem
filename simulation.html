@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samar's Solar System</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading-screen" class="loading-screen">
+        <p>Loading Solar System...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <canvas id="solarSystemCanvas"></canvas>
+
+    <div id="labels-container"></div>
+    
+    <button id="pause-button" class="control-button" aria-label="Pause animation">∥</button>
+
+    <div id="details-popup" class="details-dialog hidden" 
+         role="dialog" aria-modal="true" aria-labelledby="popup-title">
+        
+        <button id="close-popup" class="dialog-close-btn" aria-label="Close details">&times;</button>
+        
+        <div class="dialog-content">
+            <h2 id="popup-title"></h2>
+            <p id="popup-description"></p>
+            <ul class="details-list">
+                <li><strong>Diameter:</strong> <span id="popup-diameter"></span></li>
+                <li><strong>Mass:</strong> <span id="popup-mass"></span></li>
+                <li><strong>Orbital Period:</strong> <span id="popup-period"></span></li>
+                <li><strong>Distance from Sun:</strong> <span id="popup-distance"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://esm.sh/three@0.158.0",
+            "three/addons/": "https://esm.sh/three@0.158.0/examples/jsm/"
+          }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/21.0.0/tween.umd.js"></script>
+    
+    <script type="module" src="script.js"></script>
+</body>
+</html>

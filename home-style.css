@@ -1,0 +1,195 @@
+/* home-style.css */
+:root {
+    --color-text-light: #e0e0ff;
+    --color-accent: #80ffff;
+    --color-border-subtle: rgba(100, 200, 255, 0.3);
+    --color-bg-translucent: rgba(15, 25, 40, 0.75);
+}
+
+body {
+    margin: 0;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--color-text-light);
+    background-color: #000;
+    
+    /* Uses your existing starfield texture for the background! */
+    background-image: url('assets/textures/starfield.jpg');
+    background-size: cover;
+    background-position: center;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.home-container {
+    max-width: 1000px;
+    width: 100%;
+}
+
+.main-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #fff;
+    /* Neon glow effect from your screenshot */
+    text-shadow: 0 0 10px var(--color-accent), 
+                 0 0 20px var(--color-accent), 
+                 0 0 40px var(--color-accent);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    opacity: 0.8;
+    margin-bottom: 3rem;
+}
+
+.nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.nav-card {
+    /* Glassmorphism effect */
+    background-color: var(--color-bg-translucent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border-subtle);
+    
+    border-radius: 12px;
+    padding: 2rem;
+    text-decoration: none;
+    color: var(--color-text-light);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px var(--color-border-subtle);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.card-icon img {
+    width: 40px;
+    height: 40px;
+}
+
+.nav-card h2 {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+    margin: 0 0 0.5rem 0;
+}
+
+.nav-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    /* Use a more standard font for readable paragraphs */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- ADD THIS TO THE END OF home-style.css --- */
+
+/* New styles for content pages */
+.content-section {
+    /* Glassmorphism effect */
+    background-color: var(--color-bg-translucent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border-subtle);
+    
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.content-section h2 {
+    font-size: 1.8rem;
+    color: var(--color-accent);
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 1rem;
+}
+
+.content-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    opacity: 0.9;
+    /* Use a standard font for long-form text */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin-bottom: 1.5rem;
+}
+
+.content-list {
+    padding-left: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.content-list li {
+    margin-bottom: 0.75rem;
+}
+
+.content-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border-subtle);
+}
+
+/* This is for the placeholders, you can remove it later */
+.placeholder-image {
+    height: 300px;
+    background: #0a111c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-border-subtle);
+    font-family: sans-serif;
+}
+
+/* --- RESPONSIVE STYLES --- */
+
+@media (max-width: 768px) {
+    /* For tablets */
+    .main-title {
+        font-size: 2.5rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+    }
+    .content-section h2 {
+        font-size: 1.5rem;
+    }
+    .nav-card h2 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* For mobile phones */
+    body {
+        padding: 1rem; /* Less padding on small screens */
+    }
+    .main-title {
+        font-size: 2rem;
+    }
+    .nav-card,
+    .content-section {
+        padding: 1.5rem; /* Less padding inside cards */
+    }
+}
