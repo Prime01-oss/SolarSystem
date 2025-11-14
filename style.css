@@ -1,0 +1,234 @@
+/* style.css */
+
+:root {
+    --color-bg: #000000;
+    --color-text-light: #e0e0ff;
+    --color-accent: #80ffff; /* Cyan accent */
+    --color-border-subtle: rgba(100, 200, 255, 0.3);
+
+    --anim-speed-modal: 0.5s;
+    --z-index-popup: 1000;
+    --z-index-controls: 1001;
+    --z-index-loading: 9999;
+    --z-index-labels: 999;
+}
+
+body {
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--color-text-light);
+    background-color: var(--color-bg);
+}
+
+canvas {
+    display: block; /* Remove default margin */
+    width: 100vw;
+    height: 100vh;
+}
+
+/* --- Loading Screen --- */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 1.5rem;
+    z-index: var(--z-index-loading);
+    transition: opacity var(--anim-speed-modal) ease-out;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-top: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* --- Professional Space-Theme Details Panel --- */
+.details-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh; /* Full height */
+    width: 360px; /* Panel width */
+    max-width: 90%;
+    
+    /* The "Glassmorphism" Space Theme */
+    background-color: rgba(15, 25, 40, 0.75); /* Dark, translucent blue */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 1px solid var(--color-border-subtle);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.4);
+    
+    /* Content */
+    color: var(--color-text-light);
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
+
+    /* Animation */
+    transform: translateX(0); /* Default state is visible */
+    transition: transform var(--anim-speed-modal) ease-in-out;
+    z-index: var(--z-index-popup);
+}
+
+/* This class slides the panel off-screen */
+.details-dialog.hidden {
+    transform: translateX(-100%);
+    pointer-events: none;
+}
+
+.dialog-content {
+    padding: 25px;
+    height: 100%;
+    overflow-y: auto; /* Allow scrolling if content is too tall */
+}
+
+.dialog-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #ffffff;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+.dialog-close-btn:hover {
+    opacity: 1;
+}
+
+.details-dialog h2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: var(--color-accent);
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 10px;
+    font-weight: 500;
+}
+
+.details-dialog p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.details-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+.details-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+}
+.details-list li strong {
+    font-weight: 500;
+    color: #ffffff; /* Brighter white for the label */
+    opacity: 0.7;
+    margin-right: 10px;
+}
+
+/* --- Pause/Play Button --- */
+.control-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-index-controls); /* Above the side panel */
+    background-color: rgba(15, 25, 40, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-light);
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    
+    /* Centering the icon */
+    line-height: 50px; 
+    padding: 0;
+    text-align: center;
+}
+.control-button:hover {
+    background-color: rgba(30, 50, 80, 0.9);
+    transform: scale(1.05);
+}
+
+/* --- Floating Labels & Pointers (FIXED) --- */
+#labels-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through */
+    z-index: var(--z-index-labels);
+}
+
+.planet-label {
+    position: relative; /* Needed for the pointer */
+    color: var(--color-accent);
+    font-family: 'Orbitron', sans-serif; /* Space font */
+    font-size: 13px;
+    font-weight: 400; 
+    white-space: nowrap; 
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; 
+
+    /* Clean box style */
+    background-color: rgba(15, 25, 40, 0.8);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-shadow: 0 0 5px rgba(128, 255, 255, 0.6);
+    box-shadow: 0 0 8px rgba(128, 255, 255, 0.3);
+
+    /* This positions the label relative to its 3D point */
+    transform: translate(-50%, -100%); 
+}
+
+/* --- NEW: Simple CSS Pointer --- */
+.planet-label::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px; /* Position it 10px below the label */
+    transform: translateX(-50%);
+    
+    /* The pointer line */
+    width: 1px;
+    height: 10px; /* Length of the pointer */
+    background: var(--color-accent);
+    opacity: 0.7;
+}
