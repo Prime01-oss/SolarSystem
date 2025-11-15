@@ -382,13 +382,13 @@ const SolarSystem3D = {
                 this.createCelestialBodies();
                 this.domElements.loadingScreen.classList.add('hidden');
                 
-                // --- NEW: Check for URL hash after everything is built ---
+                // --- Check for URL hash after everything is built ---
                 this.checkURLForPlanetFocus(); 
             });
     },
     
     /**
-     * NEW: Checks the URL hash on load and focuses on a planet if specified.
+     * Checks the URL hash on load and focuses on a planet if specified.
      */
     checkURLForPlanetFocus() {
         const planetID = window.location.hash.substring(1); // Get "earth" from "#earth"
@@ -403,8 +403,12 @@ const SolarSystem3D = {
                 this.showDetails(targetPlanet);
                 this.focusCameraOnObject(targetPlanet);
                 
-                // Optional: Clear the hash so a page refresh doesn't re-trigger
-                history.pushState("", document.title, window.location.pathname + window.location.search);
+                // --- THIS IS THE FIX ---
+                // Use replaceState to clear the hash without creating a new history entry.
+                // This fixes the "double back button" issue.
+                history.replaceState("", document.title, window.location.pathname + window.location.search);
+                // --- END OF FIX ---
+
             }, 500); // 500ms delay
         }
     },
