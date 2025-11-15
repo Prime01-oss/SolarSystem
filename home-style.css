@@ -1,19 +1,156 @@
-/* home-style.css (Premium Scramble Version) */
+/* home-style.css (World-Class + "Lucid" Loader) */
 :root {
     --color-text-light: #e0e0ff;
     --color-accent: #80ffff;
     --color-border-subtle: rgba(100, 200, 255, 0.3);
     --color-bg-translucent: rgba(15, 25, 40, 0.75);
-    
-    /* A high-end, buttery-smooth easing function */
     --lucid-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* --- Keyframes (Unchanged) --- */
+/* --- Keyframes for Loader (Unchanged) --- */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes caretBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+@keyframes textPulse {
+    from { text-shadow: 0 0 10px var(--color-accent); }
+    to   { text-shadow: 0 0 20px #fff; }
+}
+
+/* --- Immersive Loader Styles --- */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.5s ease-out;
+    opacity: 1;
+}
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* --- NEW: "Lucid" Vignette Fix --- */
+/* This is darker in the center to create a "tunnel" 
+   and make the text and logo pop. */
+#loading-screen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: radial-gradient(
+        ellipse at center, 
+        transparent 30%, 
+        rgba(0,0,0,0.9) 65%, 
+        #000 100%
+    );
+}
+/* --- End Fix --- */
+
+
+#loader-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; 
+}
+
+.loader-content {
+    position: relative;
+    z-index: 3; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Loader Logo (Unchanged) */
+.loader-logo-container {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 2.5rem;
+    border-radius: 50%; 
+    border: 3px solid transparent;
+    border-top-color: var(--color-accent);
+    animation: spin 2s linear infinite;
+    box-shadow: 0 0 30px 5px rgba(128, 255, 255, 0.3),
+                inset 0 0 15px rgba(128, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loader-logo {
+    width: 90%; 
+    height: 90%;
+    object-fit: cover; 
+    border-radius: 50%; 
+    animation: pulseGlow 1.5s ease-out infinite alternate;
+}
+/* --- End Loader Logo --- */
+
+
+/* --- NEW: Premium Visible Greeting --- */
+#loader-greeting {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem; 
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    min-height: 3rem;
+    
+    /* 3-Layer shadow for POP */
+    text-shadow: 0 0 10px #000, /* 1. Separation */
+                 0 0 15px #fff, /* 2. "Hot" Glow */
+                 0 0 30px var(--color-accent); /* 3. "Aura" */
+}
+
+/* --- NEW: Premium Visible Status Text --- */
+#loader-text {
+    font-family: 'Share Tech Mono', monospace; 
+    font-size: 1.25rem; 
+    /* Changed to white for max contrast */
+    color: #fff; 
+    
+    /* 2-Layer shadow for clarity and glow */
+    text-shadow: 0 0 5px #000,
+                 0 0 10px var(--color-accent);
+                 
+    margin-top: 1rem;
+    min-height: 2rem; 
+    transition: opacity 0.4s ease-out;
+}
+
+/* Typing caret (Unchanged) */
+#loader-greeting.typing::after,
+#loader-text.typing::after {
+    content: '_';
+    font-weight: bold;
+    animation: caretBlink 1s infinite;
+}
+/* --- End Loader Styles --- */
+
+
+/* --- Keyframes (pulseGlow is for homepage logo) --- */
 @keyframes pulseGlow {
-    from { transform: scale(0.5); opacity: 0; }
-    70%  { transform: scale(1.05); opacity: 1; }
-    to   { transform: scale(1); opacity: 1; }
+    from { transform: scale(0.95); opacity: 0.8; filter: drop-shadow(0 0 10px var(--color-accent)); }
+    to   { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 20px var(--color-accent)); }
 }
 @keyframes subtleFloat {
     0%   { transform: translateY(0px); }
@@ -45,7 +182,52 @@ body {
 .home-container {
     max-width: 1000px;
     width: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out 0.5s; 
 }
+.home-container.visible {
+    opacity: 1;
+}
+
+/* --- Premium Back Button (Unchanged) --- */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000;
+    background: var(--color-bg-translucent);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+    text-decoration: none;
+    transition: all 0.3s var(--lucid-ease);
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease-out 0.2s;
+    animation-play-state: paused;
+}
+.back-button svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-text-light);
+    transition: transform 0.3s var(--lucid-ease);
+}
+.back-button:hover {
+    transform: scale(1.1);
+    background: rgba(128, 255, 255, 0.1);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px rgba(128, 255, 255, 0.5);
+}
+.back-button:hover svg {
+    transform: translateX(-3px);
+}
+/* --- End Back Button --- */
+
 
 .animated-logo {
     width: 120px;
@@ -57,6 +239,7 @@ body {
         pulseGlow 0.8s ease-out 0.2s forwards,
         subtleFloat 6s ease-in-out 1s infinite;
     transition: transform 0.3s ease, filter 0.3s ease;
+    animation-play-state: paused;
 }
 
 .animated-logo:hover {
@@ -75,6 +258,7 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     perspective: 500px;
+    animation-play-state: paused;
 }
 
 /* --- 3D Letter Flip (Unchanged) --- */
@@ -89,12 +273,15 @@ body {
     cursor: pointer;
 }
 .main-title:hover .letter {
-    transform: rotateX(360deg);
+    transform: translateY(-10px) scale(1.05);
     color: var(--color-accent);
     text-shadow: 0 0 10px #fff,
                  0 0 20px var(--color-accent);
 }
-/* --- End Letter Animation --- */
+.main-title-home:hover .letter {
+    transform: rotateX(360deg);
+}
+/* --- End Title Logic --- */
 
 
 .subtitle {
@@ -105,6 +292,7 @@ body {
     opacity: 0;
     animation: fadeSlideUp 0.7s ease-out 0.8s forwards;
     transition: transform 0.5s var(--lucid-ease), opacity 0.5s var(--lucid-ease);
+    animation-play-state: paused;
 }
 
 .subtitle:hover {
@@ -118,10 +306,10 @@ body {
     gap: 1.5rem;
 }
 
+/* --- "Lucid Wave" Card (Unchanged) --- */
 .nav-card {
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-border-subtle);
     border-radius: 12px;
     padding: 2rem;
@@ -130,123 +318,90 @@ body {
     text-align: left;
     opacity: 0;
     animation: fadeSlideUp 0.6s ease-out forwards;
-    
-    /* --- PREMIUM: Card Setup --- */
     position: relative;
-    overflow: hidden; /* Critical for the wave effect */
+    overflow: hidden; 
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-
-    /* We use our lucid-ease for all transitions */
     transition: transform 0.5s var(--lucid-ease),
                 box-shadow 0.5s var(--lucid-ease),
                 border-color 0.5s var(--lucid-ease);
+    animation-play-state: paused;
 }
-
-/* --- PREMIUM: The "Wave of Light" --- */
-/* This is the heart of the new effect.
-   It's a circular light, positioned *below* the card,
-   scaled to 0, and invisible. */
 .nav-card::before {
     content: '';
     position: absolute;
     left: 50%;
-    top: 100%; /* Position at the bottom-center */
-    width: 200%; /* Make it wide */
-    padding-bottom: 200%; /* Make it circular (height = width) */
+    top: 100%; 
+    width: 200%; 
+    padding-bottom: 200%; 
     border-radius: 50%;
-    
-    /* A soft radial gradient, bright in the middle */
     background: radial-gradient(
         circle, 
         rgba(128, 255, 255, 0.3) 0%, 
         transparent 70%
     );
-    
-    /* Start at 0% size and invisible */
     transform: translate(-50%, -50%) scale(0);
     opacity: 0;
-    
-    /* We animate the transform and opacity */
     transition: transform 0.6s var(--lucid-ease),
                 opacity 0.6s var(--lucid-ease);
 }
-
 .nav-card:hover {
-    /* --- PREMIUM: Card Hover State --- */
     transform: scale(1.04) translateY(-8px);
     border-color: var(--color-accent);
-    /* A big, soft "aura" */
     box-shadow: 0 20px 60px rgba(128, 255, 255, 0.2);
 }
-
-/* --- PREMIUM: Wave Animation --- */
-/* On hover, the wave blooms to 150% size and becomes visible */
 .nav-card:hover::before {
     transform: translate(-50%, -50%) scale(1.5);
     opacity: 1;
 }
-
-/* Staggered load-in (Unchanged) */
+/* Staggered load-in for homepage cards */
 .nav-card:nth-child(1) { animation-delay: 1.0s; }
 .nav-card:nth-child(2) { animation-delay: 1.2s; }
 .nav-card:nth-child(3) { animation-delay: 1.4s; }
+/* --- End Card Logic --- */
 
 
+/* --- Card Content Activation (Unchanged) --- */
 .card-icon,
 .nav-card h2,
 .nav-card p {
-    /* --- PREMIUM: Content Activation --- */
-    /* Set up all transitions with our smooth ease */
     transition: transform 0.5s var(--lucid-ease),
                 filter 0.5s var(--lucid-ease),
                 text-shadow 0.5s var(--lucid-ease),
                 opacity 0.5s var(--lucid-ease),
                 color 0.5s var(--lucid-ease);
 }
-
-/* --- PREMIUM: Sequential Content Reveal on Hover --- */
-/* As the wave blooms, the content "activates" in order */
-
 .nav-card:hover .card-icon {
     transform: translateY(-4px);
-    /* A clean, bright drop-shadow */
     filter: drop-shadow(0 0 10px var(--color-accent)) brightness(1.2);
-    transition-delay: 0.05s; /* 1. Icon activates */
+    transition-delay: 0.05s;
 }
-
 .nav-card:hover h2 {
     transform: translateY(-2px);
-    /* --- THIS IS THE KEY --- */
-    /* The scramble JS is changing the text, and this CSS
-       makes that scrambling text GLOW bright white. */
     color: #fff; 
     text-shadow: 0 0 8px #fff, 0 0 15px var(--color-accent);
-    transition-delay: 0.1s; /* 2. Title activates */
+    transition-delay: 0.1s;
 }
-
 .nav-card:hover p {
-    opacity: 1; /* Fades to full opacity */
-    transition-delay: 0.15s; /* 3. Text activates */
+    opacity: 1; 
+    transition-delay: 0.15s;
 }
-/* --- End Lucid Activation --- */
+/* --- End Card Content --- */
 
 
 .card-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    filter: brightness(1); /* Default state */
+    filter: brightness(1); 
 }
 .card-icon img {
     width: 40px;
     height: 40px;
 }
-
 .nav-card h2 {
     font-size: 1.5rem;
     color: var(--color-accent);
     margin: 0 0 0.5rem 0;
 }
-
 .nav-card p {
     font-size: 0.95rem;
     line-height: 1.6;
@@ -254,17 +409,28 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* === CONTENT PAGE STYLES (Unchanged) === */
+/* === CONTENT PAGE STYLES === */
+
 .content-section {
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-border-subtle);
     border-radius: 12px;
     padding: 2rem;
     text-align: left;
     margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease-out forwards;
+    animation-play-state: paused;
 }
+/* Staggered load-in for content pages */
+.content-section:nth-of-type(1) { animation-delay: 1.0s; }
+.content-section:nth-of-type(2) { animation-delay: 1.2s; }
+.content-section:nth-of-type(3) { animation-delay: 1.4s; }
+.content-section:nth-of-type(4) { animation-delay: 1.6s; }
+/* --- End Content Page Styles --- */
+
+
 .content-section h2 {
     font-size: 1.8rem;
     color: var(--color-accent);
@@ -297,8 +463,31 @@ body {
     border: 1px solid var(--color-border-subtle);
 }
 
-/* === RESPONSIVE STYLES (Unchanged) === */
+/* === RESPONSIVE STYLES === */
 @media (max-width: 768px) {
+    .back-button {
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+    }
+    .back-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Loader Responsive (Unchanged) */
+    .loader-logo-container {
+        width: 120px;
+        height: 120px;
+    }
+    #loader-greeting {
+        font-size: 1.8rem;
+    }
+    #loader-text {
+        font-size: 1rem;
+    }
+    
     .animated-logo { width: 100px; }
     .main-title { font-size: 2.5rem; }
     .subtitle { font-size: 1rem; }
@@ -307,8 +496,31 @@ body {
 }
 @media (max-width: 480px) {
     body { padding: 1rem; }
+    
+    /* Loader Responsive (Unchanged) */
+    .loader-logo-container {
+        width: 100px;
+        height: 100px;
+    }
+    #loader-greeting {
+        font-size: 1.5rem;
+    }
+    #loader-text {
+        font-size: 0.9rem;
+    }
+    
     .animated-logo { width: 80px; margin-bottom: 1rem; }
     .main-title { font-size: 2rem; }
     .nav-card,
     .content-section { padding: 1.5rem; }
+}
+
+/* --- THE TRIGGER (Unchanged) --- */
+.home-container.visible .animated-logo,
+.home-container.visible .main-title,
+.home-container.visible .subtitle,
+.home-container.visible .nav-card,
+.home-container.visible .content-section,
+.home-container.visible .back-button {
+    animation-play-state: running;
 }

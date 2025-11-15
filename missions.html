@@ -11,6 +11,13 @@
 </head>
 <body>
 
+    <!-- NEW: PREMIUM BACK BUTTON -->
+    <a href="index.html" class="back-button" aria-label="Go back to homepage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </a>
+
     <main class="home-container">
         
         <h1 class="main-title">Famous Missions</h1>
@@ -20,11 +27,6 @@
         <section class="content-section">
             <h2>Apollo 11: The Moon Landing</h2>
             
-            <!-- 
-              HERE IS THE FIX:
-              I've added 'style="object-position: top;"' to align the image
-              to the top of its frame, showing the full helmet.
-            -->
             <img src="assets/images/apollo-11.jpg" 
                  alt="Buzz Aldrin on the Moon, with Neil Armstrong reflected in his helmet visor" 
                  class="content-image" 
@@ -89,10 +91,29 @@
             </ul>
         </section>
 
-        <a href="index.html" class="nav-card" style="text-align: center; max-width: 200px; margin: 3rem auto 0 auto; display: block;">
-            &larr; Home
-        </a>
     </main>
+    
+    <!-- 
+      JAVASCRIPT FOR TITLE ANIMATION
+      (This is the "no-jitter" version)
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Letter Animation Logic ---
+            const title = document.querySelector('.main-title');
+            if (title) {
+                const text = title.textContent;
+                const staggerDelay = 0.03;
+                const newHTML = text.split('').map((letter, index) => {
+                    let char = (letter === ' ') ? '&nbsp;' : letter;
+                    return `<span class="letter" style="transition-delay: ${index * staggerDelay}s">${char}</span>`;
+                }).join('');
+                title.innerHTML = newHTML;
+            }
 
+            // --- Note: Card Scramble JS is not needed on this page ---
+        });
+    </script>
 </body>
 </html>
