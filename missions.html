@@ -11,19 +11,15 @@
 </head>
 <body>
 
-    <!-- PREMIUM BACK BUTTON -->
     <a href="index.html" class="premium-back-button" aria-label="Go back to homepage">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
     </a>
 
-    <main class="home-container visible"> <!-- .visible is added so animations play on load -->
-        
-        <h1 class="main-title">Famous Missions</h1>
+    <main class="home-container visible"> <h1 class="main-title">Famous Missions</h1>
         <p class="subtitle">Humanity's greatest steps into the cosmos.</p>
 
-        <!-- Apollo 11 -->
         <section class="content-section">
             <h2>Apollo 11: The Moon Landing</h2>
             
@@ -43,7 +39,6 @@
             </ul>
         </section>
 
-        <!-- Voyager Probes -->
         <section class="content-section">
             <h2>The Voyager Program: Grand Tour</h2>
 
@@ -59,7 +54,6 @@
             </ul>
         </section>
 
-        <!-- Mars Rovers -->
         <section class="content-section">
             <h2>Mars Exploration Rovers</h2>
 
@@ -75,7 +69,6 @@
             </ul>
         </section>
 
-        <!-- James Webb Space Telescope -->
         <section class="content-section">
             <h2>James Webb Space Telescope (JWST)</h2>
 
@@ -91,11 +84,40 @@
             </ul>
         </section>
 
-    </main>
+        <footer class="site-footer">
+            <!-- <h3>Explore the Simulation</h3> -->
+            <nav class="mini-planets-nav">
+                <a href="simulation.html" title="Sun" class="mini-planet-link">
+                    <div class="mini-planet sun"></div>
+                </a>
+                <a href="simulation.html" title="Mercury" class="mini-planet-link">
+                    <div class="mini-planet mercury"></div>
+                </a>
+                <a href="simulation.html" title="Venus" class="mini-planet-link">
+                    <div class="mini-planet venus"></div>
+                </a>
+                <a href="simulation.html" title="Earth" class="mini-planet-link">
+                    <div class="mini-planet earth"></div>
+                </a>
+                <a href="simulation.html" title="Mars" class="mini-planet-link">
+                    <div class="mini-planet mars"></div>
+                </a>
+                <a href="simulation.html" title="Jupiter" class="mini-planet-link">
+                    <div class="mini-planet jupiter"></div>
+                </a>
+                <a href="simulation.html" title="Saturn" class="mini-planet-link">
+                    <div class="mini-planet saturn"></div>
+                </a>
+                <a href="simulation.html" title="Uranus" class="mini-planet-link">
+                    <div class="mini-planet uranus"></div>
+                </a>
+                <a href="simulation.html" title="Neptune" class="mini-planet-link">
+                    <div class="mini-planet neptune"></div>
+                </a>
+            </nav>
+        </footer>
+        </main>
     
-    <!-- 
-      JAVASCRIPT FOR TITLE ANIMATION & ESCAPE KEY
-    -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             

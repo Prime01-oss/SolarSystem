@@ -547,3 +547,91 @@ body {
 .home-container.visible .premium-back-button {
     animation-play-state: running;
 }
+
+
+/* --- Mini Planet Footer --- */
+.site-footer {
+    width: 100%;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border-subtle);
+    text-align: center;
+    opacity: 0; /* Will be faded in by the animation */
+    animation: fadeSlideUp 0.6s ease-out 1.8s forwards; /* Delay after last content block */
+    animation-play-state: paused; /* Controlled by .visible */
+}
+
+.home-container.visible .site-footer {
+    animation-play-state: running;
+}
+
+.site-footer h3 {
+    font-size: 1.2rem;
+    color: var(--color-accent);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+}
+
+.mini-planets-nav {
+    display: flex;
+    flex-wrap: wrap; /* Allows planets to wrap on small screens */
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.mini-planet-link {
+    display: block;
+    transition: transform 0.3s var(--lucid-ease);
+}
+.mini-planet-link:hover {
+    transform: scale(1.15);
+}
+.mini-planet-link:hover .mini-planet {
+    box-shadow: 0 0 15px var(--color-accent);
+}
+
+.mini-planet {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--color-border-subtle);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,0,0,0.3);
+    transition: box-shadow 0.3s var(--lucid-ease);
+}
+
+/* --- Planet Textures --- */
+/* These paths are based on your script.js file */
+.mini-planet.sun     { background-image: url('assets/textures/sun.jpg'); }
+.mini-planet.mercury { background-image: url('assets/textures/mercury.jpg'); }
+.mini-planet.venus   { background-image: url('assets/textures/venus.jpg'); }
+.mini-planet.earth   { background-image: url('assets/textures/earth.jpg'); }
+.mini-planet.mars    { background-image: url('assets/textures/mars.jpg'); }
+.mini-planet.jupiter { background-image: url('assets/textures/jupiter.jpg'); }
+.mini-planet.saturn  { background-image: url('assets/textures/saturn.jpg'); }
+.mini-planet.uranus  { background-image: url('assets/textures/uranus.jpg'); }
+.mini-planet.neptune { background-image: url('assets/textures/neptune.jpg'); }
+
+
+/* --- Responsive Footer --- */
+@media (max-width: 768px) {
+    .mini-planet {
+        width: 40px;
+        height: 40px;
+    }
+    .mini-planets-nav {
+        gap: 12px;
+    }
+}
+
+@media (max-Midth: 480px) {
+    .mini-planet {
+        width: 35px;
+        height: 35px;
+    }
+    .mini-planets-nav {
+        gap: 10px;
+    }
+}

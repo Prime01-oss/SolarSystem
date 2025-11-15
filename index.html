@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-g">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samar's Planetarium</title>
     
@@ -176,22 +176,22 @@
             async function startBootSequence() {
                 drawStarfield(); 
                 
-                await sleep(500);
+                await sleep(200);
                 await premiumType(loaderGreeting, "Welcome Aboard, Traveler!", 70);
                 
-                await premiumType(loaderText, "Calibrating Nav-Com...", 40);
-                await sleep(500);
-                await premiumType(loaderText, "Engaging Warp Drive...", 40);
+                await premiumType(loaderText, "Calibrating Nav-Com...", 30);
+                await sleep(200);
+                await premiumType(loaderText, "Engaging Warp Drive...", 30);
                 warpSpeed = 25; // <<< THE "WOAH" MOMENT
-                await sleep(1000); // Let the warp speed show
-                await sleep(500);
+                await sleep(500); // Let the warp speed show
+                await sleep(200);
                 await premiumType(loaderGreeting, "Strap In.", 70);
-                await sleep(500);
-                await premiumType(loaderText, "Landing Sequence Initiated...", 40);
+                await sleep(200);
+                await premiumType(loaderText, "Landing Sequence Initiated...", 30);
                 
-                await premiumType(loaderText, "Arriving at Samar's Planetarium...", 40);
+                await premiumType(loaderText, "Arriving at Samar's Planetarium...", 30);
                 
-                await sleep(1500);
+                await sleep(200);
                 
                 // 1. Hide the loading screen
                 loadingScreen.classList.add('hidden');
