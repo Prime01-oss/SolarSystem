@@ -381,7 +381,32 @@ const SolarSystem3D = {
             .then(() => {
                 this.createCelestialBodies();
                 this.domElements.loadingScreen.classList.add('hidden');
+                
+                // --- NEW: Check for URL hash after everything is built ---
+                this.checkURLForPlanetFocus(); 
             });
+    },
+    
+    /**
+     * NEW: Checks the URL hash on load and focuses on a planet if specified.
+     */
+    checkURLForPlanetFocus() {
+        const planetID = window.location.hash.substring(1); // Get "earth" from "#earth"
+        if (!planetID) return; // No hash, do nothing
+
+        const targetPlanet = this.planets.find(p => p.userData.id === planetID);
+
+        if (targetPlanet) {
+            // We found the planet, now trigger the focus and details.
+            // We add a short delay to let the scene fully render before flying.
+            setTimeout(() => {
+                this.showDetails(targetPlanet);
+                this.focusCameraOnObject(targetPlanet);
+                
+                // Optional: Clear the hash so a page refresh doesn't re-trigger
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }, 500); // 500ms delay
+        }
     },
 
     /**
