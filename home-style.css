@@ -31,6 +31,13 @@ body {
     width: 100%;
 }
 
+/* --- NEW LOGO STYLE --- */
+.animated-logo {
+    width: 120px; /* You can adjust this size */
+    height: auto;
+    margin-bottom: 1.5rem; /* Creates space between logo and title */
+}
+
 .main-title {
     font-size: 3.5rem;
     font-weight: 700;
@@ -98,8 +105,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* --- ADD THIS TO THE END OF home-style.css --- */
-
 /* New styles for content pages */
 .content-section {
     /* Glassmorphism effect */
@@ -166,6 +171,9 @@ body {
 
 @media (max-width: 768px) {
     /* For tablets */
+    .animated-logo {
+        width: 100px; /* Logo resize */
+    }
     .main-title {
         font-size: 2.5rem;
     }
@@ -184,6 +192,10 @@ body {
     /* For mobile phones */
     body {
         padding: 1rem; /* Less padding on small screens */
+    }
+    .animated-logo {
+        width: 80px; /* Logo resize */
+        margin-bottom: 1rem;
     }
     .main-title {
         font-size: 2rem;
