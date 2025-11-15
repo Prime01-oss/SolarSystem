@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-g">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 1. UPDATED TITLE -->
     <title>Samar's Planetarium</title>
     
     <link rel="icon" type="image/png" href="favicon.png">
@@ -15,34 +14,171 @@
 
     <main class="home-container">
         
-        <!-- 2. ADDED ANIMATED LOGO -->
         <img src="assets/images/logo-animation.gif" alt="Animated Solar System" class="animated-logo">
 
-        <!-- 3. UPDATED TEXT -->
         <h1 class="main-title">Samar's Planetarium</h1>
         <p class="subtitle">An interactive 3D simulation of our cosmic neighborhood.</p>
 
         <nav class="nav-grid">
             <a href="simulation.html" class="nav-card">
                 <div class="card-icon">🪐</div>
-                <h2>Explore Solar System</h2>
+                <!-- We store the real title in a data-attribute -->
+                <h2 data-original-text="Explore Solar System">Explore Solar System</h2>
                 <p>Load the interactive 3D simulation. Fly between planets and view detailed info.</p>
             </a>
 
             <a href="missions.html" class="nav-card">
                 <div class="card-icon"><img src="favicon.png" alt="Rocket"></div>
-                <h2>Famous Missions</h2>
+                <!-- We store the real title in a data-attribute -->
+                <h2 data-original-text="Famous Missions">Famous Missions</h2>
                 <p>Learn about humanity's greatest achievements, from the Voyager probes to the James Webb telescope.</p>
             </a>
 
-            <!-- 3. UPDATED TEXT -->
             <a href="history.html" class="nav-card">
                 <div class="card-icon">🌌</div>
-                <h2>The History</h2>
+                <!-- We store the real title in a data-attribute -->
+                <h2 data-original-text="The History">The History</h2>
                 <p>A brief story of cosmic evolution, from the Big Bang to the formation of our solar system.</p>
             </a>
         </nav>
     </main>
 
+    <!-- 
+      THE "NO-JITTER" PREMIUM SCRAMBLE JAVASCRIPT
+      This is a complete rewrite.
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Letter Animation Logic (Unchanged) ---
+            const title = document.querySelector('.main-title');
+            if (title) {
+                const text = title.textContent;
+                const staggerDelay = 0.03;
+                const newHTML = text.split('').map((letter, index) => {
+                    let char = (letter === ' ') ? '&nbsp;' : letter;
+                    return `<span class="letter" style="transition-delay: ${index * staggerDelay}s">${char}</span>`;
+                }).join('');
+                title.innerHTML = newHTML;
+            }
+
+            // --- "NO-JITTER" SCRAMBLER CLASS ---
+            class PremiumScrambler {
+                constructor(element) {
+                    this.el = element;
+                    this.originalText = element.dataset.originalText;
+                    this.chars = '_<>$*#'; // Simplified, cleaner char set
+                    
+                    this.animationId = null;
+                    this.lastUpdateTime = 0;
+                    
+                    // --- THIS IS THE STATE ARRAY ---
+                    // We initialize it with the original text. No more empty strings!
+                    this.charArray = this.originalText.split('');
+                    
+                    // --- THESE CONTROL THE SPEED ---
+                    this.revealProgress = 0;
+                    this.revealSpeed = 400; // Time in ms to reveal the whole text
+                    this.jumbleSpeed = 50;  // Update jumbled chars every 50ms
+                    this.lastJumbleTime = 0;
+                }
+
+                // This is the main rAF loop
+                animate(currentTime) {
+                    // 1. Check if we need to stop
+                    if (!this.animationId) return; 
+
+                    // 2. Calculate elapsed time
+                    const deltaTime = currentTime - this.lastUpdateTime;
+
+                    // 3. Update Reveal Progress
+                    this.revealProgress += deltaTime;
+                    
+                    // 4. Check if we need to jumble
+                    const jumbleDelta = currentTime - this.lastJumbleTime;
+                    let needsJumble = false;
+                    if (jumbleDelta > this.jumbleSpeed) {
+                        needsJumble = true;
+                        this.lastJumbleTime = currentTime;
+                    }
+
+                    // 5. Calculate how many letters should be revealed
+                    const revealedCount = Math.floor((this.revealProgress / this.revealSpeed) * this.originalText.length);
+
+                    // 6. Loop through the array and update the state
+                    for (let i = 0; i < this.originalText.length; i++) {
+                        // This character is now "revealed"
+                        if (i < revealedCount) {
+                            this.charArray[i] = this.originalText[i];
+                        } 
+                        // This character is still "jumbling"
+                        else {
+                            // Only update if the jumble timer is ready
+                            if (needsJumble) {
+                                // Don't jumble spaces
+                                if (this.originalText[i] === ' ') {
+                                    this.charArray[i] = ' ';
+                                } else {
+                                    this.charArray[i] = this.chars[Math.floor(Math.random() * this.chars.length)];
+                                }
+                            }
+                            // On non-jumble frames, it *keeps* its previous value in the array.
+                            // This is the fix for the jitter.
+                        }
+                    }
+
+                    // 7. Write to DOM (one single write)
+                    this.el.textContent = this.charArray.join('');
+
+                    // 8. Continue or Stop
+                    if (revealedCount >= this.originalText.length) {
+                        this.stop(); // Animation is done
+                    } else {
+                        this.lastUpdateTime = currentTime;
+                        this.animationId = requestAnimationFrame((t) => this.animate(t));
+                    }
+                }
+
+                start() {
+                    // Reset all counters
+                    this.revealProgress = 0;
+                    this.lastUpdateTime = performance.now();
+                    this.lastJumbleTime = performance.now();
+                    
+                    // Reset the text array to a *full* jumbled state
+                    this.charArray = this.originalText.split('').map((char) => 
+                        char === ' ' ? ' ' : this.chars[Math.floor(Math.random() * this.chars.length)]
+                    );
+                    
+                    // Stop any previous loop and start a new one
+                    if (this.animationId) {
+                        cancelAnimationFrame(this.animationId);
+                    }
+                    this.animationId = requestAnimationFrame((t) => this.animate(t));
+                }
+
+                stop() {
+                    if (this.animationId) {
+                        cancelAnimationFrame(this.animationId);
+                    }
+                    this.animationId = null;
+                    // Final, guaranteed write of the correct text
+                    this.el.textContent = this.originalText;
+                }
+            }
+            
+            // --- Attach the new scrambler to each card ---
+            const cards = document.querySelectorAll('.nav-card');
+            
+            cards.forEach(card => {
+                const titleElement = card.querySelector('h2');
+                const scrambler = new PremiumScrambler(titleElement);
+
+                card.addEventListener('mouseenter', () => scrambler.start());
+                card.addEventListener('mouseleave', () => scrambler.stop());
+            });
+
+        });
+    </script>
 </body>
 </html>

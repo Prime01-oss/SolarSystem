@@ -1,9 +1,28 @@
-/* home-style.css */
+/* home-style.css (Premium Scramble Version) */
 :root {
     --color-text-light: #e0e0ff;
     --color-accent: #80ffff;
     --color-border-subtle: rgba(100, 200, 255, 0.3);
     --color-bg-translucent: rgba(15, 25, 40, 0.75);
+    
+    /* A high-end, buttery-smooth easing function */
+    --lucid-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* --- Keyframes (Unchanged) --- */
+@keyframes pulseGlow {
+    from { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.05); opacity: 1; }
+    to   { transform: scale(1); opacity: 1; }
+}
+@keyframes subtleFloat {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 body {
@@ -11,12 +30,9 @@ body {
     font-family: 'Orbitron', sans-serif;
     color: var(--color-text-light);
     background-color: #000;
-    
-    /* Uses your existing starfield texture for the background! */
     background-image: url('assets/textures/starfield.jpg');
     background-size: cover;
     background-position: center;
-    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,29 +47,69 @@ body {
     width: 100%;
 }
 
-/* --- NEW LOGO STYLE --- */
 .animated-logo {
-    width: 120px; /* You can adjust this size */
+    width: 120px;
     height: auto;
-    margin-bottom: 1.5rem; /* Creates space between logo and title */
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    opacity: 0; 
+    animation: 
+        pulseGlow 0.8s ease-out 0.2s forwards,
+        subtleFloat 6s ease-in-out 1s infinite;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.animated-logo:hover {
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 0 20px var(--color-accent));
 }
 
 .main-title {
     font-size: 3.5rem;
     font-weight: 700;
     color: #fff;
-    /* Neon glow effect from your screenshot */
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeSlideUp 0.7s ease-out 0.5s forwards;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    perspective: 500px;
+}
+
+/* --- 3D Letter Flip (Unchanged) --- */
+.main-title .letter {
     text-shadow: 0 0 10px var(--color-accent), 
                  0 0 20px var(--color-accent), 
                  0 0 40px var(--color-accent);
-    margin-bottom: 0.5rem;
+    transition: transform 0.6s var(--lucid-ease),
+                color 0.6s var(--lucid-ease),
+                text-shadow 0.6s var(--lucid-ease);
+    display: inline-block; 
+    cursor: pointer;
 }
+.main-title:hover .letter {
+    transform: rotateX(360deg);
+    color: var(--color-accent);
+    text-shadow: 0 0 10px #fff,
+                 0 0 20px var(--color-accent);
+}
+/* --- End Letter Animation --- */
+
 
 .subtitle {
     font-size: 1.1rem;
     font-weight: 400;
     opacity: 0.8;
     margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeSlideUp 0.7s ease-out 0.8s forwards;
+    transition: transform 0.5s var(--lucid-ease), opacity 0.5s var(--lucid-ease);
+}
+
+.subtitle:hover {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.03);
 }
 
 .nav-grid {
@@ -63,28 +119,122 @@ body {
 }
 
 .nav-card {
-    /* Glassmorphism effect */
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-border-subtle);
-    
     border-radius: 12px;
     padding: 2rem;
     text-decoration: none;
     color: var(--color-text-light);
     text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease-out forwards;
+    
+    /* --- PREMIUM: Card Setup --- */
+    position: relative;
+    overflow: hidden; /* Critical for the wave effect */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+
+    /* We use our lucid-ease for all transitions */
+    transition: transform 0.5s var(--lucid-ease),
+                box-shadow 0.5s var(--lucid-ease),
+                border-color 0.5s var(--lucid-ease);
+}
+
+/* --- PREMIUM: The "Wave of Light" --- */
+/* This is the heart of the new effect.
+   It's a circular light, positioned *below* the card,
+   scaled to 0, and invisible. */
+.nav-card::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 100%; /* Position at the bottom-center */
+    width: 200%; /* Make it wide */
+    padding-bottom: 200%; /* Make it circular (height = width) */
+    border-radius: 50%;
+    
+    /* A soft radial gradient, bright in the middle */
+    background: radial-gradient(
+        circle, 
+        rgba(128, 255, 255, 0.3) 0%, 
+        transparent 70%
+    );
+    
+    /* Start at 0% size and invisible */
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    
+    /* We animate the transform and opacity */
+    transition: transform 0.6s var(--lucid-ease),
+                opacity 0.6s var(--lucid-ease);
 }
 
 .nav-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px var(--color-border-subtle);
+    /* --- PREMIUM: Card Hover State --- */
+    transform: scale(1.04) translateY(-8px);
+    border-color: var(--color-accent);
+    /* A big, soft "aura" */
+    box-shadow: 0 20px 60px rgba(128, 255, 255, 0.2);
 }
+
+/* --- PREMIUM: Wave Animation --- */
+/* On hover, the wave blooms to 150% size and becomes visible */
+.nav-card:hover::before {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+}
+
+/* Staggered load-in (Unchanged) */
+.nav-card:nth-child(1) { animation-delay: 1.0s; }
+.nav-card:nth-child(2) { animation-delay: 1.2s; }
+.nav-card:nth-child(3) { animation-delay: 1.4s; }
+
+
+.card-icon,
+.nav-card h2,
+.nav-card p {
+    /* --- PREMIUM: Content Activation --- */
+    /* Set up all transitions with our smooth ease */
+    transition: transform 0.5s var(--lucid-ease),
+                filter 0.5s var(--lucid-ease),
+                text-shadow 0.5s var(--lucid-ease),
+                opacity 0.5s var(--lucid-ease),
+                color 0.5s var(--lucid-ease);
+}
+
+/* --- PREMIUM: Sequential Content Reveal on Hover --- */
+/* As the wave blooms, the content "activates" in order */
+
+.nav-card:hover .card-icon {
+    transform: translateY(-4px);
+    /* A clean, bright drop-shadow */
+    filter: drop-shadow(0 0 10px var(--color-accent)) brightness(1.2);
+    transition-delay: 0.05s; /* 1. Icon activates */
+}
+
+.nav-card:hover h2 {
+    transform: translateY(-2px);
+    /* --- THIS IS THE KEY --- */
+    /* The scramble JS is changing the text, and this CSS
+       makes that scrambling text GLOW bright white. */
+    color: #fff; 
+    text-shadow: 0 0 8px #fff, 0 0 15px var(--color-accent);
+    transition-delay: 0.1s; /* 2. Title activates */
+}
+
+.nav-card:hover p {
+    opacity: 1; /* Fades to full opacity */
+    transition-delay: 0.15s; /* 3. Text activates */
+}
+/* --- End Lucid Activation --- */
+
 
 .card-icon {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    filter: brightness(1); /* Default state */
 }
 .card-icon img {
     width: 40px;
@@ -101,24 +251,20 @@ body {
     font-size: 0.95rem;
     line-height: 1.6;
     opacity: 0.8;
-    /* Use a more standard font for readable paragraphs */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* New styles for content pages */
+/* === CONTENT PAGE STYLES (Unchanged) === */
 .content-section {
-    /* Glassmorphism effect */
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--color-border-subtle);
-    
     border-radius: 12px;
     padding: 2rem;
     text-align: left;
     margin-bottom: 2rem;
 }
-
 .content-section h2 {
     font-size: 1.8rem;
     color: var(--color-accent);
@@ -126,27 +272,22 @@ body {
     border-bottom: 1px solid var(--color-border-subtle);
     padding-bottom: 1rem;
 }
-
 .content-section p {
     font-size: 1rem;
     line-height: 1.7;
     opacity: 0.9;
-    /* Use a standard font for long-form text */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin-bottom: 1.5rem;
 }
-
 .content-list {
     padding-left: 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 0.95rem;
     line-height: 1.6;
 }
-
 .content-list li {
     margin-bottom: 0.75rem;
 }
-
 .content-image {
     width: 100%;
     max-height: 400px;
@@ -156,52 +297,18 @@ body {
     border: 1px solid var(--color-border-subtle);
 }
 
-/* This is for the placeholders, you can remove it later */
-.placeholder-image {
-    height: 300px;
-    background: #0a111c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-border-subtle);
-    font-family: sans-serif;
-}
-
-/* --- RESPONSIVE STYLES --- */
-
+/* === RESPONSIVE STYLES (Unchanged) === */
 @media (max-width: 768px) {
-    /* For tablets */
-    .animated-logo {
-        width: 100px; /* Logo resize */
-    }
-    .main-title {
-        font-size: 2.5rem;
-    }
-    .subtitle {
-        font-size: 1rem;
-    }
-    .content-section h2 {
-        font-size: 1.5rem;
-    }
-    .nav-card h2 {
-        font-size: 1.25rem;
-    }
+    .animated-logo { width: 100px; }
+    .main-title { font-size: 2.5rem; }
+    .subtitle { font-size: 1rem; }
+    .content-section h2 { font-size: 1.5rem; }
+    .nav-card h2 { font-size: 1.25rem; }
 }
-
 @media (max-width: 480px) {
-    /* For mobile phones */
-    body {
-        padding: 1rem; /* Less padding on small screens */
-    }
-    .animated-logo {
-        width: 80px; /* Logo resize */
-        margin-bottom: 1rem;
-    }
-    .main-title {
-        font-size: 2rem;
-    }
+    body { padding: 1rem; }
+    .animated-logo { width: 80px; margin-bottom: 1rem; }
+    .main-title { font-size: 2rem; }
     .nav-card,
-    .content-section {
-        padding: 1.5rem; /* Less padding inside cards */
-    }
+    .content-section { padding: 1.5rem; }
 }

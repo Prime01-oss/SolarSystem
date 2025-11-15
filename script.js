@@ -20,7 +20,7 @@ const SolarSystem3D = {
             texture: 'sun.jpg',
             isLight: true,
             atmosphereColor: 0xffffee, 
-            atmosphereScale: 2.5      
+            atmosphereScale: 50.5      
         },
         mercury: {
             title: "Mercury",
@@ -282,7 +282,7 @@ const SolarSystem3D = {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
         this.scene.add(ambientLight);
 
-        const sunLight = new THREE.PointLight(0xffffff, 2.0, 0, 0); 
+        const sunLight = new THREE.PointLight(0xffffff, 6.0, 0, 0); 
         this.scene.add(sunLight);
     },
 
