@@ -6,19 +6,19 @@
     <title>Universe History - Samar's Planetarium</title>
     
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="home-style.css"> 
 </head>
 <body>
 
-    <!-- NEW: PREMIUM BACK BUTTON -->
-    <a href="index.html" class="back-button" aria-label="Go back to homepage">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- PREMIUM BACK BUTTON -->
+    <a href="index.html" class="premium-back-button" aria-label="Go back to homepage">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
     </a>
 
-    <main class="home-container">
+    <main class="home-container visible"> <!-- .visible is added so animations play on load -->
         
         <h1 class="main-title">History of the Universe</h1>
         <p class="subtitle">A brief story from the Big Bang to today.</p>
@@ -89,8 +89,7 @@
     </main>
 
     <!-- 
-      JAVASCRIPT FOR TITLE ANIMATION
-      (This is the "no-jitter" version)
+      JAVASCRIPT FOR TITLE ANIMATION & ESCAPE KEY
     -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -107,7 +106,13 @@
                 title.innerHTML = newHTML;
             }
 
-            // --- Note: Card Scramble JS is not needed on this page ---
+            // --- NEW: "ESCAPE" KEY LISTENER ---
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    // Go back to the homepage
+                    window.location.href = 'index.html';
+                }
+            });
         });
     </script>
 </body>

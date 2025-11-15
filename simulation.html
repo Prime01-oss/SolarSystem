@@ -49,5 +49,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/21.0.0/tween.umd.js"></script>
     
     <script type="module" src="script.js"></script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    // Go back to the homepage
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

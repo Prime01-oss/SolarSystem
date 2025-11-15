@@ -1,25 +1,27 @@
-/* home-style.css (World-Class + "Lucid" Loader) */
+/* home-style.css (World Class + Lucid Loader) */
 :root {
     --color-text-light: #e0e0ff;
-    --color-accent: #80ffff;
+    --color-accent: #80ffff; /* CYAN ACCENT */
     --color-border-subtle: rgba(100, 200, 255, 0.3);
     --color-bg-translucent: rgba(15, 25, 40, 0.75);
     --lucid-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* --- Keyframes for Loader (Unchanged) --- */
+/* --- Keyframes for Loader --- */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
-@keyframes caretBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+@keyframes pulseCyanGlow {
+  from {
+    filter: drop-shadow(0 0 8px var(--color-accent));
+  }
+  to {
+    filter: drop-shadow(0 0 20px var(--color-accent));
+  }
 }
-@keyframes textPulse {
-    from { text-shadow: 0 0 10px var(--color-accent); }
-    to   { text-shadow: 0 0 20px #fff; }
-}
+/* --- End Keyframe --- */
+
 
 /* --- Immersive Loader Styles --- */
 #loading-screen {
@@ -40,10 +42,6 @@
     opacity: 0;
     pointer-events: none;
 }
-
-/* --- NEW: "Lucid" Vignette Fix --- */
-/* This is darker in the center to create a "tunnel" 
-   and make the text and logo pop. */
 #loading-screen::after {
     content: '';
     position: absolute;
@@ -59,9 +57,6 @@
         #000 100%
     );
 }
-/* --- End Fix --- */
-
-
 #loader-canvas {
     position: absolute;
     top: 0;
@@ -70,7 +65,6 @@
     height: 100%;
     z-index: 1; 
 }
-
 .loader-content {
     position: relative;
     z-index: 3; 
@@ -81,10 +75,10 @@
     padding: 1rem;
 }
 
-/* Loader Logo (Unchanged) */
+/* --- "PERFECT CIRCLE" FIX (Loader) --- */
 .loader-logo-container {
     width: 150px;
-    height: 150px;
+    height: 150px; /* Force square shape */
     margin-bottom: 2.5rem;
     border-radius: 50%; 
     border: 3px solid transparent;
@@ -99,59 +93,68 @@
 .loader-logo {
     width: 90%; 
     height: 90%;
-    object-fit: cover; 
-    border-radius: 50%; 
-    animation: pulseGlow 1.5s ease-out infinite alternate;
+    object-fit: cover;  /* This is the key */
+    border-radius: 50%; /* Make the image itself round */
+    animation: pulseCyanGlow 1.5s ease-in-out infinite alternate;
 }
-/* --- End Loader Logo --- */
+/* --- End Fix --- */
 
 
-/* --- NEW: Premium Visible Greeting --- */
-#loader-greeting {
+/* --- NEW: "Lucid" Premium Text Styles --- */
+#loader-greeting,
+#loader-text {
     font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem; 
     font-weight: 700;
     color: #fff;
     margin: 0;
-    min-height: 3rem;
+    /* This ensures the text block doesn't "jump" */
+    display: flex; 
+    flex-wrap: wrap;
+    justify-content: center;
     
-    /* 3-Layer shadow for POP */
-    text-shadow: 0 0 10px #000, /* 1. Separation */
-                 0 0 15px #fff, /* 2. "Hot" Glow */
-                 0 0 30px var(--color-accent); /* 3. "Aura" */
+    /* This is the fade-out for the *whole block* */
+    transition: opacity 0.3s ease-out;
 }
 
-/* --- NEW: Premium Visible Status Text --- */
+#loader-greeting {
+    font-size: 2.5rem;
+    min-height: 3rem; 
+    text-shadow: 0 0 10px #000, 
+                 0 0 15px #fff, 
+                 0 0 30px var(--color-accent);
+}
+
 #loader-text {
     font-family: 'Share Tech Mono', monospace; 
     font-size: 1.25rem; 
-    /* Changed to white for max contrast */
-    color: #fff; 
-    
-    /* 2-Layer shadow for clarity and glow */
+    color: var(--color-accent);
     text-shadow: 0 0 5px #000,
                  0 0 10px var(--color-accent);
-                 
     margin-top: 1rem;
     min-height: 2rem; 
-    transition: opacity 0.4s ease-out;
 }
 
-/* Typing caret (Unchanged) */
-#loader-greeting.typing::after,
-#loader-text.typing::after {
-    content: '_';
-    font-weight: bold;
-    animation: caretBlink 1s infinite;
+/* This is the default state for each letter (invisible) */
+#loader-greeting .letter,
+#loader-text .letter {
+    display: inline-block; /* Allows transform */
+    opacity: 0;
+    transform: translateY(10px);
+    /* This transition is what makes the staggered animation smooth */
+    transition: opacity 0.4s var(--lucid-ease),
+                transform 0.4s var(--lucid-ease);
+}
+
+/* This is the visible/animated state */
+#loader-greeting.visible .letter,
+#loader-text.visible .letter {
+    opacity: 1;
+    transform: translateY(0);
 }
 /* --- End Loader Styles --- */
 
 
-/* --- Keyframes (pulseGlow is for homepage logo) --- */
-@keyframes pulseGlow {
-    from { transform: scale(0.95); opacity: 0.8; filter: drop-shadow(0 0 10px var(--color-accent)); }
-    to   { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 20px var(--color-accent)); }
-}
+/* --- Homepage Keyframes --- */
 @keyframes subtleFloat {
     0%   { transform: translateY(0px); }
     50%  { transform: translateY(-8px); }
@@ -189,8 +192,8 @@ body {
     opacity: 1;
 }
 
-/* --- Premium Back Button (Unchanged) --- */
-.back-button {
+/* --- Premium Back Button --- */
+.premium-back-button {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -211,41 +214,51 @@ body {
     animation: fadeSlideUp 0.6s ease-out 0.2s;
     animation-play-state: paused;
 }
-.back-button svg {
+.premium-back-button svg {
     width: 20px;
     height: 20px;
     color: var(--color-text-light);
     transition: transform 0.3s var(--lucid-ease);
 }
-.back-button:hover {
+.premium-back-button:hover {
     transform: scale(1.1);
     background: rgba(128, 255, 255, 0.1);
     border-color: var(--color-accent);
     box-shadow: 0 0 20px rgba(128, 255, 255, 0.5);
 }
-.back-button:hover svg {
+.premium-back-button:hover svg {
     transform: translateX(-3px);
 }
 /* --- End Back Button --- */
 
 
+/* --- "PERFECT CIRCLE" FIX (Homepage) --- */
 .animated-logo {
     width: 120px;
-    height: auto;
+    height: 120px; /* Force 1:1 aspect ratio */
+    object-fit: cover;  /* Fill the circle */
+    border-radius: 50%; /* Make it round */
+    
     margin-bottom: 1.5rem;
     cursor: pointer;
     opacity: 0; 
+    
     animation: 
-        pulseGlow 0.8s ease-out 0.2s forwards,
-        subtleFloat 6s ease-in-out 1s infinite;
+        fadeSlideUp 0.8s ease-out 0.2s forwards,
+        pulseCyanGlow 2.5s ease-in-out 1s infinite alternate;
+    
     transition: transform 0.3s ease, filter 0.3s ease;
     animation-play-state: paused;
 }
+/* --- End Fix --- */
+
 
 .animated-logo:hover {
     transform: scale(1.15) rotate(5deg);
     filter: drop-shadow(0 0 20px var(--color-accent));
 }
+/* --- End Logo --- */
+
 
 .main-title {
     font-size: 3.5rem;
@@ -261,7 +274,7 @@ body {
     animation-play-state: paused;
 }
 
-/* --- 3D Letter Flip (Unchanged) --- */
+/* --- 3D Letter Flip --- */
 .main-title .letter {
     text-shadow: 0 0 10px var(--color-accent), 
                  0 0 20px var(--color-accent), 
@@ -294,7 +307,6 @@ body {
     transition: transform 0.5s var(--lucid-ease), opacity 0.5s var(--lucid-ease);
     animation-play-state: paused;
 }
-
 .subtitle:hover {
     opacity: 1;
     transform: translateY(-5px) scale(1.03);
@@ -306,7 +318,7 @@ body {
     gap: 1.5rem;
 }
 
-/* --- "Lucid Wave" Card (Unchanged) --- */
+/* --- "Lucid Wave" Card --- */
 .nav-card {
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
@@ -360,7 +372,7 @@ body {
 /* --- End Card Logic --- */
 
 
-/* --- Card Content Activation (Unchanged) --- */
+/* --- Card Content Activation --- */
 .card-icon,
 .nav-card h2,
 .nav-card p {
@@ -465,18 +477,18 @@ body {
 
 /* === RESPONSIVE STYLES === */
 @media (max-width: 768px) {
-    .back-button {
+    .premium-back-button {
         top: 10px;
         left: 10px;
         width: 40px;
         height: 40px;
     }
-    .back-button svg {
+    .premium-back-button svg {
         width: 18px;
         height: 18px;
     }
     
-    /* Loader Responsive (Unchanged) */
+    /* Loader Responsive */
     .loader-logo-container {
         width: 120px;
         height: 120px;
@@ -488,7 +500,11 @@ body {
         font-size: 1rem;
     }
     
-    .animated-logo { width: 100px; }
+    .animated-logo {
+        width: 100px;
+        height: 100px;
+    }
+    
     .main-title { font-size: 2.5rem; }
     .subtitle { font-size: 1rem; }
     .content-section h2 { font-size: 1.5rem; }
@@ -497,7 +513,7 @@ body {
 @media (max-width: 480px) {
     body { padding: 1rem; }
     
-    /* Loader Responsive (Unchanged) */
+    /* Loader Responsive */
     .loader-logo-container {
         width: 100px;
         height: 100px;
@@ -509,18 +525,25 @@ body {
         font-size: 0.9rem;
     }
     
-    .animated-logo { width: 80px; margin-bottom: 1rem; }
+    .animated-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 1rem;
+    }
+    
     .main-title { font-size: 2rem; }
     .nav-card,
     .content-section { padding: 1.5rem; }
 }
+/* --- End Responsive Styles --- */
 
-/* --- THE TRIGGER (Unchanged) --- */
+
+/* --- THE TRIGGER --- */
 .home-container.visible .animated-logo,
 .home-container.visible .main-title,
 .home-container.visible .subtitle,
 .home-container.visible .nav-card,
 .home-container.visible .content-section,
-.home-container.visible .back-button {
+.home-container.visible .premium-back-button {
     animation-play-state: running;
 }

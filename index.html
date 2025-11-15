@@ -6,14 +6,15 @@
     <title>Samar's Planetarium</title>
     
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Added 'Share Tech Mono' for the loader text -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="home-style.css"> 
 </head>
 <body>
 
     <!-- 
-      NEW: "WORLD-CLASS" IMMERSIVE LOADER
+      "WORLD-CLASS" IMMERSIVE LOADER
     -->
     <div id="loading-screen">
         <!-- The "Warp Speed" Canvas -->
@@ -28,6 +29,7 @@
             </div>
             
             <!-- The new, premium, two-line text display -->
+            <!-- These are now wrappers. The JS will fill them with letter spans. -->
             <h2 id="loader-greeting"></h2>
             <p id="loader-text"></p>
 
@@ -87,24 +89,41 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            // A helper function for delays
+            window.addEventListener('resize', () => {
+                if (loadingScreen.classList.contains('hidden')) return;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
             const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            // Premium Typewriter Function
-            async function type(element, text, delay = 60) {
-                element.innerHTML = ''; // Clear element
-                element.classList.add('typing'); // Add caret
-                for (let i = 0; i < text.length; i++) {
-                    await sleep(delay);
-                    element.innerHTML = text.substring(0, i + 1);
-                }
-                element.classList.remove('typing'); // Remove caret
+            // --- NEW: Premium "No-Jitter" Typewriter ---
+            async function premiumType(element, text, delay = 50) {
+                // 1. Split text into spans
+                const newHTML = text.split('').map((letter, index) => {
+                    const char = (letter === ' ') ? '&nbsp;' : letter;
+                    return `<span class="letter" style="transition-delay: ${index * (delay / 1000)}s">${char}</span>`;
+                }).join('');
+                
+                // 2. Set all (invisible) spans at once. NO REFLOW.
+                element.innerHTML = newHTML;
+                
+                // 3. Trigger the animation by adding .visible
+                // We use requestAnimationFrame to ensure the DOM has updated
+                requestAnimationFrame(() => {
+                    element.classList.add('visible');
+                });
+
+                // 4. Wait for the animation to finish
+                await sleep(text.length * delay + 500); // Wait for all letters + 0.5s buffer
+                element.classList.remove('visible');
+                await sleep(300); // Wait for fade out
             }
 
             // --- Starfield Animation ---
             let stars = [];
             const numStars = 500;
-            let warpSpeed = 5; // Start at a slower speed
+            let warpSpeed = 5; 
             let animationFrameId_Loader;
 
             function createStar() {
@@ -117,14 +136,18 @@
             for (let i = 0; i < numStars; i++) { stars[i] = createStar(); }
 
             function drawStarfield() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // Trail effect
+                if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
 
                 for (let i = 0; i < numStars; i++) {
                     let star = stars[i];
-                    star.z -= warpSpeed; // Move star
+                    star.z -= warpSpeed;
                     if (star.z <= 0) {
                         stars[i] = createStar();
                         star = stars[i];
@@ -133,8 +156,6 @@
                     const px = star.x * k;
                     const py = star.y * k;
                     const size = (1 - star.z / 1000) * 4;
-                    
-                    // Make stars whiter as speed increases
                     const alpha = Math.min(0.8, (1 - star.z / 1000) * (warpSpeed / 8));
                     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
                     ctx.beginPath();
@@ -145,25 +166,32 @@
                 animationFrameId_Loader = requestAnimationFrame(drawStarfield);
             }
 
+            // Function to just skip the loader
+            function skipLoader() {
+                loadingScreen.classList.add('hidden');
+                homeContainer.classList.add('visible');
+            }
+
             // --- Main "Immersive Boot" Function ---
             async function startBootSequence() {
-                drawStarfield(); // Start the starfield loop
-
-                await sleep(500);
-                await type(loaderGreeting, "Welcome Aboard, Traveler.", 70);
-                await sleep(1000);
-
-                await type(loaderText, "Calibrating Nav-Com...", 40);
-                await sleep(1000);
+                drawStarfield(); 
                 
-                await type(loaderText, "Engaging Warp Drive...", 50);
+                await sleep(500);
+                await premiumType(loaderGreeting, "Welcome Aboard, Traveler!", 70);
+                
+                await premiumType(loaderText, "Calibrating Nav-Com...", 40);
+                await sleep(500);
+                await premiumType(loaderText, "Engaging Warp Drive...", 40);
                 warpSpeed = 25; // <<< THE "WOAH" MOMENT
-                await sleep(1500);
-                
-                await type(loaderGreeting, "Seat tightly.", 70);
+                await sleep(1000); // Let the warp speed show
                 await sleep(500);
-                await type(loaderText, "Get ready to land in the Planetarium.", 40);
-                await sleep(2000);
+                await premiumType(loaderGreeting, "Strap In.", 70);
+                await sleep(500);
+                await premiumType(loaderText, "Landing Sequence Initiated...", 40);
+                
+                await premiumType(loaderText, "Arriving at Samar's Planetarium...", 40);
+                
+                await sleep(1500);
                 
                 // 1. Hide the loading screen
                 loadingScreen.classList.add('hidden');
@@ -171,17 +199,25 @@
                 // 2. Show the homepage
                 homeContainer.classList.add('visible');
                 
-                // 3. Stop the loader animation loop to save CPU
+                // 3. Stop the loader animation loop
                 cancelAnimationFrame(animationFrameId_Loader);
+                
+                // 4. SET THE SESSION STORAGE FLAG
+                sessionStorage.setItem('hasLoaded', 'true');
             }
             
-            // Start the entire experience
-            startBootSequence();
+            // --- THE SESSION STORAGE FIX ---
+            if (sessionStorage.getItem('hasLoaded')) {
+                skipLoader(); // Skip if we've been here before
+            } else {
+                startBootSequence(); // Run full animation on first visit
+            }
+            // --- END FIX ---
 
 
-            // --- 2. HOMEPAGE ANIMATION LOGIC (Unchanged) ---
+            // --- 2. HOMEPAGE ANIMATION LOGIC ---
             
-            // --- Letter Animation Logic ---
+            // --- Homepage Title Letter Animation ---
             const title = document.querySelector('.main-title');
             if (title) {
                 const text = title.textContent;
@@ -264,9 +300,11 @@
             const cards = document.querySelectorAll('.nav-card');
             cards.forEach(card => {
                 const titleElement = card.querySelector('h2');
-                const scrambler = new PremiumScrambler(titleElement);
-                card.addEventListener('mouseenter', () => scrambler.start());
-                card.addEventListener('mouseleave', () => scrambler.stop());
+                if (titleElement) { 
+                    const scrambler = new PremiumScrambler(titleElement);
+                    card.addEventListener('mouseenter', () => scrambler.start());
+                    card.addEventListener('mouseleave', () => scrambler.stop());
+                }
             });
         });
     </script>
