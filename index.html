@@ -23,8 +23,11 @@
             
             <h2 id="loader-greeting"></h2>
             <p id="loader-text"></p>
-
-        </div>
+            
+            <div id="start-button-container">
+                <button id="start-button">START</button>
+            </div>
+            </div>
         
         <audio id="hyperdrive-sound" preload="auto" style="display: none;">
             <source src="assets/sounds/hyperdrive.mp3" type="audio/mpeg">
@@ -71,9 +74,12 @@
             const canvas = document.getElementById('loader-canvas');
             const ctx = canvas.getContext('2d');
             
-            // ✅ Get the audio element
+            // ✅ Get the audio and new button element
             const hyperdriveSound = document.getElementById('hyperdrive-sound');
+            const startButton = document.getElementById('start-button');
+            const startButtonContainer = document.getElementById('start-button-container');
 
+            // --- Initial Setup (Unchanged) ---
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
@@ -85,29 +91,26 @@
 
             const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            // --- Premium "No-Jitter" Typewriter ---
+            // --- Premium "No-Jitter" Typewriter (Modified to accept fixed text first) ---
             async function premiumType(element, text, delay = 50) {
-                // 1. Split text into spans
+                // ... (Implementation remains the same as previous) ...
                 const newHTML = text.split('').map((letter, index) => {
                     const char = (letter === ' ') ? '&nbsp;' : letter;
                     return `<span class="letter" style="transition-delay: ${index * (delay / 1000)}s">${char}</span>`;
                 }).join('');
                 
-                // 2. Set all (invisible) spans at once.
                 element.innerHTML = newHTML;
                 
-                // 3. Trigger the animation
                 requestAnimationFrame(() => {
                     element.classList.add('visible');
                 });
 
-                // 4. Wait for the animation to finish
                 await sleep(text.length * delay + 500);
                 element.classList.remove('visible');
                 await sleep(300);
             }
 
-            // --- Starfield Animation ---
+            // --- Starfield Animation (Unchanged) ---
             let stars = [];
             const numStars = 500;
             let warpSpeed = 5; 
@@ -123,6 +126,7 @@
             for (let i = 0; i < numStars; i++) { stars[i] = createStar(); }
 
             function drawStarfield() {
+                // ... (Implementation remains the same as previous) ...
                 if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
@@ -153,16 +157,26 @@
                 animationFrameId_Loader = requestAnimationFrame(drawStarfield);
             }
 
-            // Function to just skip the loader
+            // Function to just skip the loader (Unchanged)
             function skipLoader() {
                 loadingScreen.classList.add('hidden');
                 homeContainer.classList.add('visible');
             }
-
-            // --- Main "Immersive Boot" Function ---
-            async function startBootSequence() {
-                drawStarfield(); 
+            
+            // --- NEW: Boot Sequence Logic (Now independent) ---
+            async function bootSequence() {
+                // Hide the start button
+                if (startButtonContainer) {
+                    startButtonContainer.style.opacity = '0';
+                    await sleep(300); // Wait for fade out
+                    startButtonContainer.style.display = 'none';
+                }
                 
+                // Reset to blank typewriter mode
+                loaderGreeting.textContent = '';
+                loaderText.textContent = '';
+                
+                // Start the main boot sequence text and audio
                 await sleep(200);
                 await premiumType(loaderGreeting, "Welcome Aboard, Traveler!", 70);
                 
@@ -170,30 +184,31 @@
                 await sleep(200);
                 await premiumType(loaderText, "Engaging Warp Drive...", 30);
                 
-                // ✅ Play the full sound effect here
+                // ✅ Play the full sound effect here - guaranteed to work after click
                 try {
                     hyperdriveSound.volume = 1.0; 
-                    hyperdriveSound.play().catch(e => console.warn("Audio Play Error (Autoplay blocked):", e)); 
+                    hyperdriveSound.play();
                 } catch (e) {
-                    // Fallback
+                    console.error("Audio Play Error:", e);
                 }
 
                 warpSpeed = 25; // <<< THE "WOAH" MOMENT
-                await sleep(1200); // Give time for the sound/visual effect
+                await sleep(1200); 
                 
                 // ✅ Stop and reset the sound after the main warp moment
-                try {
-                    hyperdriveSound.pause();
-                    hyperdriveSound.currentTime = 0; // Rewind for next visit
-                } catch (e) {
-                    // Fallback
-                }
+              
 
                 await premiumType(loaderGreeting, "Strap In.", 70);
                 await sleep(200);
                 await premiumType(loaderText, "Landing Sequence Initiated...", 30);
                 
                 await premiumType(loaderText, "Arriving at Samar's Planetarium...", 30);
+                  try {
+                    hyperdriveSound.pause();
+                    hyperdriveSound.currentTime = 0; 
+                } catch (e) {
+                    // Fallback
+                }
                 
                 await sleep(200);
                 
@@ -210,16 +225,41 @@
                 sessionStorage.setItem('hasLoaded', 'true');
             }
             
-            // --- THE SESSION STORAGE FIX ---
-            if (sessionStorage.getItem('hasLoaded')) {
-                skipLoader(); // Skip if we've been here before
-            } else {
-                startBootSequence(); // Run full animation on first visit
+            // --- NEW: Start Logic (Waiting for Click) ---
+            
+            // This function runs on initial load
+            function startLoader() {
+                // Check sessionStorage first
+                if (sessionStorage.getItem('hasLoaded')) {
+                    skipLoader(); 
+                    return;
+                }
+                
+                // Start the starfield animation immediately
+                drawStarfield();
+                
+                // Set the initial greeting/prompt
+                loaderGreeting.classList.add('visible');
+                loaderText.classList.add('visible');
+                startButtonContainer.style.opacity = '1';
+                
+                // Add the click listener to start the sequence
+                if (startButton) {
+                    startButton.addEventListener('click', () => {
+                        // Remove the listener to prevent multiple clicks
+                        startButton.removeEventListener('click', bootSequence);
+                        
+                        // Execute the sequence now that we have a user gesture
+                        bootSequence();
+                    });
+                }
             }
-            // --- END FIX ---
+
+            startLoader();
+            // --- END NEW: Start Logic ---
 
 
-            // --- 2. HOMEPAGE ANIMATION LOGIC ---
+            // --- 2. HOMEPAGE ANIMATION LOGIC (Unchanged) ---
             
             // --- Homepage Title Letter Animation ---
             const title = document.querySelector('.main-title');
@@ -235,6 +275,7 @@
 
             // --- "NO-JITTER" SCRAMBLER CLASS ---
             class PremiumScrambler {
+                // ... (Implementation remains the same as previous) ...
                 constructor(element) {
                     this.el = element;
                     this.originalText = element.dataset.originalText;
