@@ -65,8 +65,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- 1. WORLD-CLASS LOADER LOGIC ---
-            
             const loadingScreen = document.getElementById('loading-screen');
             const homeContainer = document.querySelector('.home-container');
             const loaderGreeting = document.getElementById('loader-greeting');
@@ -74,12 +72,10 @@
             const canvas = document.getElementById('loader-canvas');
             const ctx = canvas.getContext('2d');
             
-            // ✅ Get the audio and new button element
             const hyperdriveSound = document.getElementById('hyperdrive-sound');
             const startButton = document.getElementById('start-button');
             const startButtonContainer = document.getElementById('start-button-container');
 
-            // --- Initial Setup (Unchanged) ---
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
@@ -91,9 +87,7 @@
 
             const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            // --- Premium "No-Jitter" Typewriter (Modified to accept fixed text first) ---
             async function premiumType(element, text, delay = 50) {
-                // ... (Implementation remains the same as previous) ...
                 const newHTML = text.split('').map((letter, index) => {
                     const char = (letter === ' ') ? '&nbsp;' : letter;
                     return `<span class="letter" style="transition-delay: ${index * (delay / 1000)}s">${char}</span>`;
@@ -110,7 +104,6 @@
                 await sleep(300);
             }
 
-            // --- Starfield Animation (Unchanged) ---
             let stars = [];
             const numStars = 500;
             let warpSpeed = 5; 
@@ -126,7 +119,6 @@
             for (let i = 0; i < numStars; i++) { stars[i] = createStar(); }
 
             function drawStarfield() {
-                // ... (Implementation remains the same as previous) ...
                 if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
@@ -157,26 +149,41 @@
                 animationFrameId_Loader = requestAnimationFrame(drawStarfield);
             }
 
-            // Function to just skip the loader (Unchanged)
             function skipLoader() {
                 loadingScreen.classList.add('hidden');
                 homeContainer.classList.add('visible');
             }
             
-            // --- NEW: Boot Sequence Logic (Now independent) ---
+            // ★ NEW: AUDIO FADE-OUT FUNCTION (nothing else changed)
+            function fadeOutAudio(audio, duration = 1200) {
+                const initialVolume = audio.volume;
+                const start = performance.now();
+
+                function fade(t) {
+                    const progress = Math.min((t - start) / duration, 1);
+                    audio.volume = initialVolume * (1 - progress);
+                    if (progress < 1) {
+                        requestAnimationFrame(fade);
+                    } else {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        audio.volume = initialVolume;
+                    }
+                }
+                requestAnimationFrame(fade);
+            }
+
             async function bootSequence() {
-                // Hide the start button
+                
                 if (startButtonContainer) {
                     startButtonContainer.style.opacity = '0';
-                    await sleep(300); // Wait for fade out
+                    await sleep(300);
                     startButtonContainer.style.display = 'none';
                 }
                 
-                // Reset to blank typewriter mode
                 loaderGreeting.textContent = '';
                 loaderText.textContent = '';
                 
-                // Start the main boot sequence text and audio
                 await sleep(200);
                 await premiumType(loaderGreeting, "Welcome Aboard, Traveler!", 70);
                 
@@ -184,7 +191,6 @@
                 await sleep(200);
                 await premiumType(loaderText, "Engaging Warp Drive...", 30);
                 
-                // ✅ Play the full sound effect here - guaranteed to work after click
                 try {
                     hyperdriveSound.volume = 1.0; 
                     hyperdriveSound.play();
@@ -192,76 +198,50 @@
                     console.error("Audio Play Error:", e);
                 }
 
-                warpSpeed = 25; // <<< THE "WOAH" MOMENT
+                warpSpeed = 25; 
                 await sleep(1200); 
                 
-                // ✅ Stop and reset the sound after the main warp moment
-              
-
                 await premiumType(loaderGreeting, "Strap In.", 70);
                 await sleep(200);
                 await premiumType(loaderText, "Landing Sequence Initiated...", 30);
                 
                 await premiumType(loaderText, "Arriving at Samar's Planetarium...", 30);
-                  try {
-                    hyperdriveSound.pause();
-                    hyperdriveSound.currentTime = 0; 
-                } catch (e) {
-                    // Fallback
-                }
-                
+
+                // ★ NEW: FADE OUT SOUND (this is the ONLY behavioral change)
+                fadeOutAudio(hyperdriveSound, 1200);
+
                 await sleep(200);
                 
-                // 1. Hide the loading screen
                 loadingScreen.classList.add('hidden');
-                
-                // 2. Show the homepage
                 homeContainer.classList.add('visible');
                 
-                // 3. Stop the loader animation loop
                 cancelAnimationFrame(animationFrameId_Loader);
                 
-                // 4. SET THE SESSION STORAGE FLAG
                 sessionStorage.setItem('hasLoaded', 'true');
             }
             
-            // --- NEW: Start Logic (Waiting for Click) ---
-            
-            // This function runs on initial load
             function startLoader() {
-                // Check sessionStorage first
                 if (sessionStorage.getItem('hasLoaded')) {
                     skipLoader(); 
                     return;
                 }
                 
-                // Start the starfield animation immediately
                 drawStarfield();
                 
-                // Set the initial greeting/prompt
                 loaderGreeting.classList.add('visible');
                 loaderText.classList.add('visible');
                 startButtonContainer.style.opacity = '1';
                 
-                // Add the click listener to start the sequence
                 if (startButton) {
                     startButton.addEventListener('click', () => {
-                        // Remove the listener to prevent multiple clicks
                         startButton.removeEventListener('click', bootSequence);
-                        
-                        // Execute the sequence now that we have a user gesture
                         bootSequence();
                     });
                 }
             }
 
             startLoader();
-            // --- END NEW: Start Logic ---
 
-
-            // --- 2. HOMEPAGE ANIMATION LOGIC (Unchanged) ---
-            
-            // --- Homepage Title Letter Animation ---
             const title = document.querySelector('.main-title');
             if (title) {
                 const text = title.textContent;
@@ -273,9 +253,7 @@
                 title.innerHTML = newHTML;
             }
 
-            // --- "NO-JITTER" SCRAMBLER CLASS ---
             class PremiumScrambler {
-                // ... (Implementation remains the same as previous) ...
                 constructor(element) {
                     this.el = element;
                     this.originalText = element.dataset.originalText;
