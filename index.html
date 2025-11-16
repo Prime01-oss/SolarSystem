@@ -1,41 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Samar's Planetarium</title>
-    
+
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="home-style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="home-style.css">
 </head>
+
 <body>
 
     <div id="loading-screen">
         <canvas id="loader-canvas"></canvas>
-        
+
         <div class="loader-content">
-            
+
             <div class="loader-logo-container">
                 <img src="assets/images/logo-animation.gif" alt="Booting..." class="loader-logo">
             </div>
-            
+
             <h2 id="loader-greeting"></h2>
             <p id="loader-text"></p>
-            
+
             <div id="start-button-container">
                 <button id="start-button">START</button>
             </div>
-            </div>
-        
+        </div>
+
         <audio id="hyperdrive-sound" preload="auto" style="display: none;">
             <source src="assets/sounds/hyperdrive.mp3" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
     </div>
     <main class="home-container">
-        
+
         <img src="assets/images/logo-animation.gif" alt="Animated Solar System" class="animated-logo">
 
         <h1 class="main-title main-title-home">Samar's Planetarium</h1>
@@ -51,7 +54,8 @@
             <a href="missions.html" class="nav-card">
                 <div class="card-icon"><img src="favicon.png" alt="Rocket"></div>
                 <h2 data-original-text="Famous Missions">Famous Missions</h2>
-                <p>Learn about humanity's greatest achievements, from the Voyager probes to the James Webb telescope.</p>
+                <p>Learn about humanity's greatest achievements, from the Voyager probes to the James Webb telescope.
+                </p>
             </a>
 
             <a href="history.html" class="nav-card">
@@ -71,7 +75,7 @@
             const loaderText = document.getElementById('loader-text');
             const canvas = document.getElementById('loader-canvas');
             const ctx = canvas.getContext('2d');
-            
+
             const hyperdriveSound = document.getElementById('hyperdrive-sound');
             const startButton = document.getElementById('start-button');
             const startButtonContainer = document.getElementById('start-button-container');
@@ -87,26 +91,31 @@
 
             const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+
+            /* ============================================================
+               PREMIUM LOADER TYPE EFFECT
+               ============================================================ */
             async function premiumType(element, text, delay = 50) {
                 const newHTML = text.split('').map((letter, index) => {
-                    const char = (letter === ' ') ? '&nbsp;' : letter;
-                    return `<span class="letter" style="transition-delay: ${index * (delay / 1000)}s">${char}</span>`;
+                    const c = (letter === ' ') ? '&nbsp;' : letter;
+                    return `<span class="letter" style="transition-delay:${index * (delay / 1000)}s">${c}</span>`;
                 }).join('');
-                
+
                 element.innerHTML = newHTML;
-                
-                requestAnimationFrame(() => {
-                    element.classList.add('visible');
-                });
+                requestAnimationFrame(() => element.classList.add('visible'));
 
                 await sleep(text.length * delay + 500);
                 element.classList.remove('visible');
                 await sleep(300);
             }
 
+
+            /* ============================================================
+               STARFIELD LOADER
+               ============================================================ */
             let stars = [];
             const numStars = 500;
-            let warpSpeed = 5; 
+            let warpSpeed = 5;
             let animationFrameId_Loader;
 
             function createStar() {
@@ -116,55 +125,57 @@
                     z: Math.random() * 1000
                 };
             }
-            for (let i = 0; i < numStars; i++) { stars[i] = createStar(); }
+            for (let i = 0; i < numStars; i++) stars[i] = createStar();
 
             function drawStarfield() {
                 if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
                 }
+
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.save();
                 ctx.translate(canvas.width / 2, canvas.height / 2);
 
                 for (let i = 0; i < numStars; i++) {
-                    let star = stars[i];
-                    star.z -= warpSpeed;
-                    if (star.z <= 0) {
+                    let s = stars[i];
+                    s.z -= warpSpeed;
+
+                    if (s.z <= 0) {
                         stars[i] = createStar();
-                        star = stars[i];
+                        s = stars[i];
                     }
-                    const k = 128 / star.z;
-                    const px = star.x * k;
-                    const py = star.y * k;
-                    const size = (1 - star.z / 1000) * 4;
-                    const alpha = Math.min(0.8, (1 - star.z / 1000) * (warpSpeed / 8));
+
+                    const k = 128 / s.z;
+                    const px = s.x * k;
+                    const py = s.y * k;
+                    const size = (1 - s.z / 1000) * 4;
+                    const alpha = Math.min(0.8, (1 - s.z / 1000) * (warpSpeed / 8));
+
                     ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
                     ctx.beginPath();
                     ctx.arc(px, py, size, 0, Math.PI * 2);
                     ctx.fill();
                 }
+
                 ctx.restore();
                 animationFrameId_Loader = requestAnimationFrame(drawStarfield);
             }
 
-            function skipLoader() {
-                loadingScreen.classList.add('hidden');
-                homeContainer.classList.add('visible');
-            }
-            
-            // ★ NEW: AUDIO FADE-OUT FUNCTION (nothing else changed)
+
+            /* ============================================================
+               AUDIO FADE OUT
+               ============================================================ */
             function fadeOutAudio(audio, duration = 1200) {
                 const initialVolume = audio.volume;
                 const start = performance.now();
 
                 function fade(t) {
-                    const progress = Math.min((t - start) / duration, 1);
-                    audio.volume = initialVolume * (1 - progress);
-                    if (progress < 1) {
-                        requestAnimationFrame(fade);
-                    } else {
+                    const p = Math.min((t - start) / duration, 1);
+                    audio.volume = initialVolume * (1 - p);
+                    if (p < 1) requestAnimationFrame(fade);
+                    else {
                         audio.pause();
                         audio.currentTime = 0;
                         audio.volume = initialVolume;
@@ -173,65 +184,203 @@
                 requestAnimationFrame(fade);
             }
 
+
+            /* ============================================================
+               NEW — MAIN TITLE FLIP ANIMATION
+               ============================================================ */
+            async function runMainTitleAnimation() {
+                const title = document.querySelector('.main-title');
+                if (!title) return;
+
+                const letters = [...title.querySelectorAll('.letter')];
+                letters.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.transform = "rotateX(360deg) translateY(-10px)";
+                        el.style.opacity = "1";
+                    }, index * 20);
+                });
+
+                await sleep(letters.length * 20 + 800);
+
+                letters.forEach(el => {
+                    el.style.transform = "";
+                    el.style.opacity = "";
+                });
+
+                await sleep(300);
+            }
+
+
+            /* ============================================================
+               SCRAMBLER CLASS (UNCHANGED)
+               ============================================================ */
+            class PremiumScrambler {
+                constructor(element) {
+                    this.el = element;
+                    this.originalText = element.dataset.originalText;
+                    this.chars = '_<>$*#';
+                    this.animationId = null;
+                    this.lastUpdateTime = 0;
+                    this.charArray = this.originalText.split('');
+                    this.revealProgress = 0;
+                    this.revealSpeed = 400;
+                    this.jumbleSpeed = 50;
+                    this.lastJumbleTime = 0;
+                }
+
+                animate(t) {
+                    if (!this.animationId) return;
+
+                    const delta = t - this.lastUpdateTime;
+                    const jumbleDelta = t - this.lastJumbleTime;
+                    this.revealProgress += delta;
+
+                    let needsJumble = false;
+                    if (jumbleDelta > this.jumbleSpeed) {
+                        this.lastJumbleTime = t;
+                        needsJumble = true;
+                    }
+
+                    const revealedCount = Math.floor((this.revealProgress / this.revealSpeed) * this.originalText.length);
+
+                    for (let i = 0; i < this.originalText.length; i++) {
+                        if (i < revealedCount) this.charArray[i] = this.originalText[i];
+                        else if (needsJumble)
+                            this.charArray[i] = this.originalText[i] === ' '
+                                ? ' '
+                                : this.chars[Math.floor(Math.random() * this.chars.length)];
+                    }
+
+                    this.el.textContent = this.charArray.join('');
+
+                    if (revealedCount >= this.originalText.length) this.stop();
+                    else {
+                        this.lastUpdateTime = t;
+                        this.animationId = requestAnimationFrame((x) => this.animate(x));
+                    }
+                }
+
+                start() {
+                    this.revealProgress = 0;
+                    this.lastUpdateTime = performance.now();
+                    this.lastJumbleTime = performance.now();
+                    this.charArray = this.originalText.split('').map(c =>
+                        c === ' ' ? ' ' : this.chars[Math.floor(Math.random() * this.chars.length)]
+                    );
+                    if (this.animationId) cancelAnimationFrame(this.animationId);
+                    this.animationId = requestAnimationFrame((t) => this.animate(t));
+                }
+
+                stop() {
+                    if (this.animationId) cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                    this.el.textContent = this.originalText;
+                }
+            }
+
+
+            /* ============================================================
+               NEW — GLOBAL SCRAMBLER REGISTRY
+               ============================================================ */
+            const cardScramblers = [];
+
+            const cards = document.querySelectorAll('.nav-card');
+            cards.forEach(card => {
+                const h2 = card.querySelector('h2');
+                if (!h2) return;
+                const scrambler = new PremiumScrambler(h2);
+                cardScramblers.push(scrambler);
+
+                card.addEventListener('mouseenter', () => scrambler.start());
+                card.addEventListener('mouseleave', () => scrambler.stop());
+            });
+
+
+            /* ============================================================
+               NEW — COMBINED INITIAL ANIMATION SEQUENCE
+               ============================================================ */
+            async function runInitialHomepageAnimations(scramblers) {
+                await runMainTitleAnimation();
+
+                for (let i = 0; i < scramblers.length; i++) {
+                    const s = scramblers[i];
+                    s.start();
+                    await sleep(200);
+                    s.stop();
+                }
+            }
+
+
+            /* ============================================================
+               LOADER SEQUENCE
+               ============================================================ */
+            function skipLoader() {
+                loadingScreen.classList.add('hidden');
+                homeContainer.classList.add('visible');
+
+                runInitialHomepageAnimations(cardScramblers);
+            }
+
             async function bootSequence() {
-                
+
                 if (startButtonContainer) {
                     startButtonContainer.style.opacity = '0';
                     await sleep(300);
                     startButtonContainer.style.display = 'none';
                 }
-                
+
                 loaderGreeting.textContent = '';
                 loaderText.textContent = '';
-                
+
                 await sleep(200);
                 await premiumType(loaderGreeting, "Welcome Aboard, Traveler!", 70);
-                
+
                 await premiumType(loaderText, "Calibrating Nav-Com...", 30);
                 await sleep(200);
                 await premiumType(loaderText, "Engaging Warp Drive...", 30);
-                
+
                 try {
-                    hyperdriveSound.volume = 1.0; 
+                    hyperdriveSound.volume = 1.0;
                     hyperdriveSound.play();
                 } catch (e) {
-                    console.error("Audio Play Error:", e);
+                    console.error(e);
                 }
 
-                warpSpeed = 25; 
-                await sleep(1200); 
-                
+                warpSpeed = 25;
+                await sleep(1200);
+
                 await premiumType(loaderGreeting, "Strap In.", 70);
                 await sleep(200);
                 await premiumType(loaderText, "Landing Sequence Initiated...", 30);
-                
+
                 await premiumType(loaderText, "Arriving at Samar's Planetarium...", 30);
 
-                // ★ NEW: FADE OUT SOUND (this is the ONLY behavioral change)
                 fadeOutAudio(hyperdriveSound, 1200);
 
                 await sleep(200);
-                
+
                 loadingScreen.classList.add('hidden');
                 homeContainer.classList.add('visible');
-                
+
                 cancelAnimationFrame(animationFrameId_Loader);
-                
+
                 sessionStorage.setItem('hasLoaded', 'true');
+
+                runInitialHomepageAnimations(cardScramblers);
             }
-            
+
             function startLoader() {
                 if (sessionStorage.getItem('hasLoaded')) {
-                    skipLoader(); 
+                    skipLoader();
                     return;
                 }
-                
+
                 drawStarfield();
-                
+
                 loaderGreeting.classList.add('visible');
                 loaderText.classList.add('visible');
                 startButtonContainer.style.opacity = '1';
-                
+
                 if (startButton) {
                     startButton.addEventListener('click', () => {
                         startButton.removeEventListener('click', bootSequence);
@@ -242,94 +391,23 @@
 
             startLoader();
 
+
+            /* ============================================================
+               INITIAL LETTER-WRAPPING FOR MAIN TITLE
+               ============================================================ */
             const title = document.querySelector('.main-title');
             if (title) {
-                const text = title.textContent;
+                const txt = title.textContent;
                 const staggerDelay = 0.03;
-                const newHTML = text.split('').map((letter, index) => {
-                    let char = (letter === ' ') ? '&nbsp;' : letter;
-                    return `<span class="letter" style="transition-delay: ${index * staggerDelay}s">${char}</span>`;
-                }).join('');
-                title.innerHTML = newHTML;
+                const html = txt.split('').map((c, i) =>
+                    `<span class="letter" style="transition-delay:${i * staggerDelay}s">${c === ' ' ? '&nbsp;' : c}</span>`
+                ).join('');
+                title.innerHTML = html;
             }
 
-            class PremiumScrambler {
-                constructor(element) {
-                    this.el = element;
-                    this.originalText = element.dataset.originalText;
-                    this.chars = '_<>$*#';
-                    this.animationId = null;
-                    this.lastUpdateTime = 0;
-                    this.charArray = this.originalText.split('');
-                    this.revealProgress = 0;
-                    this.revealSpeed = 400; 
-                    this.jumbleSpeed = 50; 
-                    this.lastJumbleTime = 0;
-                }
-                animate(currentTime) {
-                    if (!this.animationId) return; 
-                    const deltaTime = currentTime - this.lastUpdateTime;
-                    this.revealProgress += deltaTime;
-                    const jumbleDelta = currentTime - this.lastJumbleTime;
-                    let needsJumble = false;
-                    if (jumbleDelta > this.jumbleSpeed) {
-                        needsJumble = true;
-                        this.lastJumbleTime = currentTime;
-                    }
-                    const revealedCount = Math.floor((this.revealProgress / this.revealSpeed) * this.originalText.length);
-                    for (let i = 0; i < this.originalText.length; i++) {
-                        if (i < revealedCount) {
-                            this.charArray[i] = this.originalText[i];
-                        } 
-                        else {
-                            if (needsJumble) {
-                                if (this.originalText[i] === ' ') {
-                                    this.charArray[i] = ' ';
-                                } else {
-                                    this.charArray[i] = this.chars[Math.floor(Math.random() * this.chars.length)];
-                                }
-                            }
-                        }
-                    }
-                    this.el.textContent = this.charArray.join('');
-                    if (revealedCount >= this.originalText.length) {
-                        this.stop(); 
-                    } else {
-                        this.lastUpdateTime = currentTime;
-                        this.animationId = requestAnimationFrame((t) => this.animate(t));
-                    }
-                }
-                start() {
-                    this.revealProgress = 0;
-                    this.lastUpdateTime = performance.now();
-                    this.lastJumbleTime = performance.now();
-                    this.charArray = this.originalText.split('').map((char) => 
-                        char === ' ' ? ' ' : this.chars[Math.floor(Math.random() * this.chars.length)]
-                    );
-                    if (this.animationId) {
-                        cancelAnimationFrame(this.animationId);
-                    }
-                    this.animationId = requestAnimationFrame((t) => this.animate(t));
-                }
-                stop() {
-                    if (this.animationId) {
-                        cancelAnimationFrame(this.animationId);
-                    }
-                    this.animationId = null;
-                    this.el.textContent = this.originalText;
-                }
-            }
-            
-            const cards = document.querySelectorAll('.nav-card');
-            cards.forEach(card => {
-                const titleElement = card.querySelector('h2');
-                if (titleElement) { 
-                    const scrambler = new PremiumScrambler(titleElement);
-                    card.addEventListener('mouseenter', () => scrambler.start());
-                    card.addEventListener('mouseleave', () => scrambler.stop());
-                }
-            });
         });
     </script>
+
 </body>
+
 </html>
