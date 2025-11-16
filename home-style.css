@@ -319,6 +319,7 @@ body {
 }
 
 /* --- "Lucid Wave" Card --- */
+/* --- "Lucid Wave" Card --- */
 .nav-card {
     background-color: var(--color-bg-translucent);
     backdrop-filter: blur(10px);
@@ -333,12 +334,17 @@ body {
     position: relative;
     overflow: hidden; 
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    
+    /* FIX: Force hardware acceleration to stabilize grid position during animation */
+    transform: translateZ(0);
+    
     transition: transform 0.5s var(--lucid-ease),
                 box-shadow 0.5s var(--lucid-ease),
                 border-color 0.5s var(--lucid-ease);
     animation-play-state: paused;
 }
 .nav-card::before {
+    /* ... (rest of ::before rule remains unchanged) ... */
     content: '';
     position: absolute;
     left: 50%;
@@ -357,14 +363,11 @@ body {
                 opacity 0.6s var(--lucid-ease);
 }
 .nav-card:hover {
-    transform: scale(1.04) translateY(-8px);
+    transform: scale(1.04) translateY(-8px) translateZ(0); /* Added translateZ(0) here too */
     border-color: var(--color-accent);
     box-shadow: 0 20px 60px rgba(128, 255, 255, 0.2);
 }
-.nav-card:hover::before {
-    transform: translate(-50%, -50%) scale(1.5);
-    opacity: 1;
-}
+/* ... (rest of CSS remains unchanged) ... */
 /* Staggered load-in for homepage cards */
 .nav-card:nth-child(1) { animation-delay: 1.0s; }
 .nav-card:nth-child(2) { animation-delay: 1.2s; }
@@ -634,4 +637,48 @@ body {
     .mini-planets-nav {
         gap: 10px;
     }
+}
+/* --- Additions to home-style.css (ideally at the bottom) --- */
+
+#start-button-container {
+    margin-top: 3rem;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+}
+
+#start-button {
+    font-family: 'Orbitron', sans-serif;
+    background: var(--color-accent);
+    color: #000;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(128, 255, 255, 0.7);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+#start-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(128, 255, 255, 1.0);
+}
+
+/* * IMPORTANT: These styles ensure the initial static text is shown 
+* before the typewriter effect takes over.
+*/
+#loading-screen #loader-greeting.visible,
+#loading-screen #loader-text.visible {
+    opacity: 1; 
+    transition: opacity 0.3s ease-out 0.5s; 
+}
+
+/* Override letter animation for the initial static text */
+#loading-screen #loader-greeting.visible .letter,
+#loading-screen #loader-text.visible .letter {
+    opacity: 1;
+    transform: translateY(0);
+    transition: none; /* Disable individual letter transitions initially */
 }

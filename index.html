@@ -6,42 +6,31 @@
     <title>Samar's Planetarium</title>
     
     <link rel="icon" type="image/png" href="favicon.png">
-    <!-- Added 'Share Tech Mono' for the loader text -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="home-style.css"> 
 </head>
 <body>
 
-    <!-- 
-      "WORLD-CLASS" IMMERSIVE LOADER
-    -->
     <div id="loading-screen">
-        <!-- The "Warp Speed" Canvas -->
         <canvas id="loader-canvas"></canvas>
         
-        <!-- The center content -->
         <div class="loader-content">
             
-            <!-- The new, perfectly round logo container -->
             <div class="loader-logo-container">
                 <img src="assets/images/logo-animation.gif" alt="Booting..." class="loader-logo">
             </div>
             
-            <!-- The new, premium, two-line text display -->
-            <!-- These are now wrappers. The JS will fill them with letter spans. -->
             <h2 id="loader-greeting"></h2>
             <p id="loader-text"></p>
 
         </div>
+        
+        <audio id="hyperdrive-sound" preload="auto" style="display: none;">
+            <source src="assets/sounds/hyperdrive.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
-    <!-- End Loader -->
-
-
-    <!-- 
-      Your existing homepage.
-      Starts hidden and is "un-paused" by the loader.
-    -->
     <main class="home-container">
         
         <img src="assets/images/logo-animation.gif" alt="Animated Solar System" class="animated-logo">
@@ -70,10 +59,6 @@
         </nav>
     </main>
 
-    <!-- 
-      NEW: COMBINED JAVASCRIPT
-      (Loader Logic + Homepage Animation Logic)
-    -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -85,6 +70,9 @@
             const loaderText = document.getElementById('loader-text');
             const canvas = document.getElementById('loader-canvas');
             const ctx = canvas.getContext('2d');
+            
+            // ✅ Get the audio element
+            const hyperdriveSound = document.getElementById('hyperdrive-sound');
 
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -97,7 +85,7 @@
 
             const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            // --- NEW: Premium "No-Jitter" Typewriter ---
+            // --- Premium "No-Jitter" Typewriter ---
             async function premiumType(element, text, delay = 50) {
                 // 1. Split text into spans
                 const newHTML = text.split('').map((letter, index) => {
@@ -105,19 +93,18 @@
                     return `<span class="letter" style="transition-delay: ${index * (delay / 1000)}s">${char}</span>`;
                 }).join('');
                 
-                // 2. Set all (invisible) spans at once. NO REFLOW.
+                // 2. Set all (invisible) spans at once.
                 element.innerHTML = newHTML;
                 
-                // 3. Trigger the animation by adding .visible
-                // We use requestAnimationFrame to ensure the DOM has updated
+                // 3. Trigger the animation
                 requestAnimationFrame(() => {
                     element.classList.add('visible');
                 });
 
                 // 4. Wait for the animation to finish
-                await sleep(text.length * delay + 500); // Wait for all letters + 0.5s buffer
+                await sleep(text.length * delay + 500);
                 element.classList.remove('visible');
-                await sleep(300); // Wait for fade out
+                await sleep(300);
             }
 
             // --- Starfield Animation ---
@@ -182,9 +169,26 @@
                 await premiumType(loaderText, "Calibrating Nav-Com...", 30);
                 await sleep(200);
                 await premiumType(loaderText, "Engaging Warp Drive...", 30);
+                
+                // ✅ Play the full sound effect here
+                try {
+                    hyperdriveSound.volume = 1.0; 
+                    hyperdriveSound.play().catch(e => console.warn("Audio Play Error (Autoplay blocked):", e)); 
+                } catch (e) {
+                    // Fallback
+                }
+
                 warpSpeed = 25; // <<< THE "WOAH" MOMENT
-                await sleep(500); // Let the warp speed show
-                await sleep(200);
+                await sleep(1200); // Give time for the sound/visual effect
+                
+                // ✅ Stop and reset the sound after the main warp moment
+                try {
+                    hyperdriveSound.pause();
+                    hyperdriveSound.currentTime = 0; // Rewind for next visit
+                } catch (e) {
+                    // Fallback
+                }
+
                 await premiumType(loaderGreeting, "Strap In.", 70);
                 await sleep(200);
                 await premiumType(loaderText, "Landing Sequence Initiated...", 30);
